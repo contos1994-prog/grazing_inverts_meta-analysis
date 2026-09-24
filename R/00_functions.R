@@ -166,21 +166,24 @@ theme_meta <- function() {
 # orchard-style plot: raw effects (sized by precision), pooled estimate,
 # 95% CI (thick) and 95% prediction interval (thin)
 orchard <- function(eff, summ, level_lab, title, subtitle = NULL) {
+  # sample sizes go in the axis label so they never collide with the points
+  summ$ylab <- paste0(summ$level, "\n", summ$lab)
+  eff <- left_join(eff, summ[, c("level", "response", "ylab")], by = c("level", "response"))
+  lv <- unique(summ$ylab[order(summ$response, -as.integer(summ$level))])
+  summ$ylab <- factor(summ$ylab, rev(lv)); eff$ylab <- factor(eff$ylab, rev(lv))
   ggplot() +
     geom_vline(xintercept = 0, colour = INK2, linetype = "dashed", linewidth = 0.4) +
-    geom_jitter(data = eff, aes(x = yi, y = level, size = 1 / sqrt(vi)),
+    geom_jitter(data = eff, aes(x = yi, y = ylab, size = 1 / sqrt(vi)),
                 colour = SERIES, alpha = 0.3, height = 0.18, width = 0, stroke = 0) +
-    geom_errorbarh(data = summ, aes(y = level, xmin = pi_lb, xmax = pi_ub), height = 0,
+    geom_errorbarh(data = summ, aes(y = ylab, xmin = pi_lb, xmax = pi_ub), height = 0,
                    colour = INK, linewidth = 0.5) +
-    geom_errorbarh(data = summ, aes(y = level, xmin = ci_lb, xmax = ci_ub), height = 0,
+    geom_errorbarh(data = summ, aes(y = ylab, xmin = ci_lb, xmax = ci_ub), height = 0,
                    colour = INK, linewidth = 1.6) +
-    geom_point(data = summ, aes(x = estimate, y = level), shape = 21, fill = "white",
+    geom_point(data = summ, aes(x = estimate, y = ylab), shape = 21, fill = "white",
                colour = INK, size = 3, stroke = 1) +
-    geom_text(data = summ, aes(x = Inf, y = level, label = lab), hjust = 1.05, vjust = -0.9,
-              size = 3, colour = INK2) +
     facet_wrap(~ response, ncol = 1, scales = "free_y") +
     scale_size_continuous(range = c(1, 5), guide = "none") +
     labs(x = "lnRR  (ln exclosure / grazed; > 0 = higher without grazers)", y = level_lab,
          title = title, subtitle = subtitle) +
-    theme_meta()
+    theme_meta() + theme(plot.title.position = "plot", axis.text.y = element_text(lineheight = 0.9))
 }

@@ -139,7 +139,7 @@ plot_analysis <- function(analysis, file, level_lab, title) {
   summ$response <- factor(summ$response, RESP_GROUPS); eff$response <- factor(eff$response, RESP_GROUPS)
   h <- 1.2 + 0.55 * nrow(summ) + 0.6 * length(unique(summ$response))
   g <- orchard(eff, summ, level_lab, title,
-               "Points: individual effect sizes (size = precision). Bar: 95% CI; line: 95% prediction interval.")
+               "Points: effect sizes (size = precision)\nThick bar: 95% CI; thin line: 95% prediction interval")
   ggsave(file, g, width = 7.5, height = h, dpi = 250, bg = "white")
 }
 plot_analysis("Overall", "output/figures/overall.png", NULL, "Overall effect of excluding grazers")
