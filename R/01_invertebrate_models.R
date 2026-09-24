@@ -116,7 +116,7 @@ for (rg in RESP_GROUPS) {
   # leave-one-study-out range for the overall estimate
   loo <- sapply(unique(d$Study_ID), function(s) coef(fit_mlma(d |> filter(Study_ID != s)))[1])
   het[[rg]]$loo_min <- round(min(loo), 3); het[[rg]]$loo_max <- round(max(loo), 3)
-  het[[rg]]$loo_most_influential <- names(loo)[which.max(abs(loo - coef(m0)[1]))]
+  het[[rg]]$loo_most_influential <- sub("\\.intrcpt$", "", names(loo)[which.max(abs(loo - coef(m0)[1]))])
 
   png(sprintf("output/figures/funnel_%s.png", tolower(rg)), width = 1600, height = 1400, res = 250)
   funnel(m0, xlab = "Residual lnRR", back = "#f0efec", shade = "white", hlines = "#e4e3df",
