@@ -1,0 +1,60 @@
+"analysis","response","term","estimate","ci_lb","ci_ub","p","robust_ci_lb","robust_ci_ub","robust_p","pct_change","pct_ci_lb","pct_ci_ub","k","n_studies","n_locations"
+"Overall","Abundance","intrcpt",0.138,0.011,0.265,0.0338,0.019,0.257,0.025,14.8,1.1,30.3,417,68,44
+"Stratum","Abundance","StratumAbove-ground",0.204,0.05,0.358,0.00972,0.031,0.376,0.0235,22.6,5.1,43,190,37,26
+"Stratum","Abundance","StratumGround & litter-dwelling",0.083,-0.088,0.253,0.341,-0.077,0.242,0.282,8.6,-8.4,28.8,151,25,21
+"Stratum","Abundance","StratumBelow-ground",0.094,-0.168,0.355,0.482,-0.093,0.281,0.273,9.8,-15.5,42.7,75,13,10
+"Grazer size (largest class excluded)","Abundance","Max_size_classSmall",1.325,0.805,1.846,3.47e-06,-1.366,4.016,0.116,276.4,123.7,533.3,8,3,2
+"Grazer size (largest class excluded)","Abundance","Max_size_classMedium",-0.033,-0.244,0.179,0.76,-0.218,0.152,0.711,-3.2,-21.7,19.6,173,33,20
+"Grazer size (largest class excluded)","Abundance","Max_size_classLarge",0.203,0.003,0.403,0.0465,-0.054,0.461,0.116,22.5,0.3,49.6,172,29,24
+"Grazer size (largest class excluded)","Abundance","Max_size_classMega",-0.081,-0.461,0.299,0.676,-1.128,0.967,0.799,-7.8,-36.9,34.8,20,8,4
+"Grazer size trend (per class step)","Abundance","intrcpt",0.246,-0.161,0.652,0.229,-0.389,0.881,0.415,27.8,-14.8,91.9,373,67,44
+"Grazer size trend (per class step)","Abundance","size_rank",-0.047,-0.197,0.104,0.542,-0.319,0.226,0.713,-4.6,-17.9,10.9,373,67,44
+"Grazer size (single-class exclosures only)","Abundance","Single_size_classSmall",1.174,0.646,1.702,4.26e-05,-1.636,3.984,0.133,223.5,90.7,448.7,8,3,2
+"Grazer size (single-class exclosures only)","Abundance","Single_size_classMedium",-0.006,-0.195,0.183,0.953,-0.204,0.193,0.952,-0.6,-17.7,20.1,140,33,20
+"Grazer size (single-class exclosures only)","Abundance","Single_size_classLarge",0.101,-0.095,0.297,0.313,-0.201,0.402,0.487,10.6,-9.1,34.5,134,22,19
+"Grazer size (single-class exclosures only)","Abundance","Single_size_classMega",-0.163,-0.578,0.251,0.439,-0.975,0.649,0.499,-15.1,-43.9,28.5,13,5,4
+"Herbivore origin","Abundance","Herbivore_originNative",0.145,-0.016,0.306,0.0775,-0.044,0.334,0.122,15.6,-1.6,35.8,220,38,25
+"Herbivore origin","Abundance","Herbivore_originDomestic",0.102,-0.083,0.287,0.279,-0.045,0.25,0.152,10.8,-8,33.3,178,29,20
+"Time since exclusion (ln years+1)","Abundance","intrcpt",0.342,0.074,0.611,0.0137,-0.161,0.846,0.163,40.8,7.7,84.1,401,61,39
+"Time since exclusion (ln years+1)","Abundance","log_years",-0.108,-0.226,0.011,0.0743,-0.373,0.158,0.394,-10.2,-20.2,1.1,401,61,39
+"Sensitivity: study design","Abundance","DesignExclosure",0.164,0.029,0.299,0.0187,0.035,0.293,0.0157,17.8,2.9,34.9,392,59,36
+"Sensitivity: study design","Abundance","DesignNatural grazed vs ungrazed",-0.054,-0.421,0.314,0.77,-0.491,0.383,0.774,-5.2,-34.4,36.9,25,9,8
+"Sensitivity: overall, zero-mean rows removed","Abundance","intrcpt",0.131,0.009,0.254,0.0357,0.018,0.245,0.0255,14,0.9,28.9,412,68,44
+"Publication bias: Egger (SE as moderator)","Abundance","intrcpt",-0.086,-0.241,0.069,0.268,-0.232,0.06,0.229,-8.3,-21.4,7.1,417,68,44
+"Publication bias: Egger (SE as moderator)","Abundance","sei",0.757,0.449,1.066,1.93e-06,0.312,1.203,0.0033,113.3,56.7,190.3,417,68,44
+"Overall","Richness","intrcpt",0.216,0.038,0.395,0.0191,0.038,0.395,0.0194,24.1,3.9,48.4,115,35,31
+"Stratum","Richness","StratumAbove-ground",0.236,0.023,0.449,0.0305,-0.001,0.473,0.0508,26.6,2.3,56.7,32,16,15
+"Stratum","Richness","StratumGround & litter-dwelling",0.222,0.023,0.422,0.0293,0.022,0.422,0.0318,24.9,2.3,52.4,53,15,15
+"Stratum","Richness","StratumBelow-ground",0.139,-0.085,0.364,0.221,-0.067,0.346,0.163,15,-8.2,43.9,30,6,5
+"Grazer size (largest class excluded)","Richness","Max_size_classMedium",0.142,-0.078,0.362,0.203,-0.047,0.332,0.13,15.3,-7.5,43.7,45,17,14
+"Grazer size (largest class excluded)","Richness","Max_size_classLarge",0.31,0.093,0.527,0.00564,0.012,0.608,0.0426,36.3,9.7,69.4,49,16,16
+"Grazer size trend (per class step)","Richness","intrcpt",0.217,-0.173,0.607,0.264,-0.555,0.989,0.46,24.2,-15.9,83.5,101,34,30
+"Grazer size trend (per class step)","Richness","size_rank",-0.002,-0.135,0.132,0.978,-0.418,0.415,0.988,-0.2,-12.7,14.1,101,34,30
+"Grazer size (single-class exclosures only)","Richness","Single_size_classMedium",0.13,-0.068,0.327,0.195,-0.005,0.264,0.0571,13.9,-6.6,38.7,33,17,14
+"Grazer size (single-class exclosures only)","Richness","Single_size_classLarge",0.2,-0.002,0.401,0.0523,-0.089,0.488,0.158,22.1,-0.2,49.4,44,14,14
+"Herbivore origin","Richness","Herbivore_originNative",0.248,0.031,0.466,0.0264,0.008,0.489,0.044,28.2,3.1,59.3,75,19,17
+"Herbivore origin","Richness","Herbivore_originDomestic",0.198,-0.034,0.43,0.0918,-0.107,0.503,0.179,21.9,-3.3,53.7,39,15,14
+"Time since exclusion (ln years+1)","Richness","intrcpt",0.104,-0.305,0.513,0.605,-0.132,0.34,0.313,10.9,-26.3,67,103,28,25
+"Time since exclusion (ln years+1)","Richness","log_years",0.075,-0.096,0.247,0.384,-0.078,0.229,0.242,7.8,-9.1,28,103,28,25
+"Sensitivity: study design","Richness","DesignExclosure",0.196,0.009,0.382,0.0404,-0.005,0.396,0.0555,21.6,0.9,46.5,105,29,26
+"Sensitivity: study design","Richness","DesignNatural grazed vs ungrazed",0.316,0.022,0.609,0.0357,0,0.632,0.05,37.1,2.3,83.9,10,6,6
+"Publication bias: Egger (SE as moderator)","Richness","intrcpt",0.144,-0.056,0.343,0.152,-0.048,0.335,0.135,15.4,-5.4,40.9,115,35,31
+"Publication bias: Egger (SE as moderator)","Richness","sei",0.447,-0.114,1.008,0.117,-0.085,0.979,0.0863,56.4,-10.8,174,115,35,31
+"Overall","Diversity","intrcpt",0.098,-0.174,0.37,0.453,-0.172,0.369,0.451,10.3,-15.9,44.8,46,17,16
+"Stratum","Diversity","StratumAbove-ground",0.203,-0.277,0.683,0.377,-0.719,1.126,0.595,22.5,-24.2,98,17,6,6
+"Stratum","Diversity","StratumGround & litter-dwelling",-0.048,-0.479,0.382,0.813,-0.225,0.128,0.505,-4.7,-38.1,46.5,10,5,5
+"Stratum","Diversity","StratumBelow-ground",0.106,-0.296,0.508,0.58,-0.029,0.242,0.104,11.2,-25.6,66.2,19,6,6
+"Grazer size (largest class excluded)","Diversity","Max_size_classMedium",0.072,-0.206,0.35,0.604,-0.197,0.34,0.564,7.4,-18.6,41.8,15,8,8
+"Grazer size (largest class excluded)","Diversity","Max_size_classLarge",0.21,-0.066,0.485,0.131,-0.163,0.583,0.239,23.3,-6.4,62.4,21,8,8
+"Grazer size trend (per class step)","Diversity","intrcpt",-0.309,-0.858,0.239,0.245,-0.854,0.236,0.179,-26.6,-57.6,27,42,16,15
+"Grazer size trend (per class step)","Diversity","size_rank",0.166,-0.025,0.356,0.0864,-0.13,0.462,0.158,18,-2.4,42.8,42,16,15
+"Grazer size (single-class exclosures only)","Diversity","Single_size_classMedium",0.025,-0.105,0.155,0.697,-0.057,0.107,0.483,2.5,-10,16.8,13,8,8
+"Grazer size (single-class exclosures only)","Diversity","Single_size_classLarge",0.034,-0.1,0.168,0.605,-0.158,0.226,0.635,3.5,-9.5,18.2,13,6,6
+"Herbivore origin","Diversity","Herbivore_originNative",0.047,-0.272,0.366,0.758,-0.342,0.435,0.791,4.8,-23.8,44.2,25,10,10
+"Herbivore origin","Diversity","Herbivore_originDomestic",0.169,-0.18,0.518,0.319,-0.051,0.389,0.11,18.4,-16.5,67.8,21,7,7
+"Time since exclusion (ln years+1)","Diversity","intrcpt",0.182,-0.459,0.823,0.55,-0.442,0.807,0.418,20,-36.8,127.7,40,15,15
+"Time since exclusion (ln years+1)","Diversity","log_years",-0.012,-0.302,0.278,0.933,-0.215,0.191,0.853,-1.2,-26.1,32,40,15,15
+"Sensitivity: study design","Diversity","DesignExclosure",0.162,-0.107,0.432,0.218,-0.111,0.435,0.221,17.6,-10.1,54,36,13,13
+"Sensitivity: study design","Diversity","DesignNatural grazed vs ungrazed",-0.137,-0.535,0.26,0.473,-0.642,0.368,0.439,-12.8,-41.4,29.7,10,4,4
+"Publication bias: Egger (SE as moderator)","Diversity","intrcpt",0.045,-0.258,0.347,0.756,-0.272,0.361,0.763,4.6,-22.7,41.5,46,17,16
+"Publication bias: Egger (SE as moderator)","Diversity","sei",0.363,-0.632,1.358,0.466,-1.925,2.651,0.698,43.8,-46.8,288.9,46,17,16

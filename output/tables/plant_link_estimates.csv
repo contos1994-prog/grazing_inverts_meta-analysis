@@ -1,0 +1,5 @@
+"plant_measure","analysis","response","term","estimate","ci_lb","ci_ub","p","robust_ci_lb","robust_ci_ub","robust_p","pct_change","pct_ci_lb","pct_ci_ub","k","n_studies","n_locations"
+"Plant biomass - above-ground","Invert lnRR ~ plant biomass lnRR","Abundance","intrcpt",0.144,-0.303,0.592,0.471,-0.359,0.647,0.499,15.5,-26.2,80.7,143,14,9
+"Plant biomass - above-ground","Invert lnRR ~ plant biomass lnRR","Abundance","plant_lnRR",-0.066,-0.571,0.44,0.782,-0.775,0.644,0.747,-6.4,-43.5,55.3,143,14,9
+"Plant biomass - above-ground","Invert lnRR ~ plant biomass lnRR","Richness","intrcpt",-0.047,-0.311,0.217,0.677,-0.319,0.225,0.656,-4.6,-26.7,24.2,45,8,8
+"Plant biomass - above-ground","Invert lnRR ~ plant biomass lnRR","Richness","plant_lnRR",0.053,-0.287,0.393,0.717,-0.235,0.341,0.47,5.4,-24.9,48.1,45,8,8

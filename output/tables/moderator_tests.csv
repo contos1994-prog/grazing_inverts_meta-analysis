@@ -1,0 +1,16 @@
+"analysis","response","test","F","df1","df2","p","robust_F","robust_p"
+"Stratum","Abundance","difference among Stratum levels",1.045,2,413,0.352,1.253,0.346
+"Grazer size (largest class excluded)","Abundance","difference among Max_size_class levels",9.136,3,369,7.59e-06,2.438,0.379
+"Grazer size (single-class exclosures only)","Abundance","difference among Single_size_class levels",6.828,3,291,0.000184,2.416,0.353
+"Herbivore origin","Abundance","difference among Herbivore_origin levels",0.135,1,396,0.713,0.168,0.69
+"Sensitivity: study design","Abundance","difference among Design levels",1.257,1,42,0.269,1.332,0.283
+"Stratum","Richness","difference among Stratum levels",0.81,2,112,0.447,1.9,0.365
+"Grazer size (largest class excluded)","Richness","difference among Max_size_class levels",2.241,1,92,0.138,1.442,0.309
+"Grazer size (single-class exclosures only)","Richness","difference among Single_size_class levels",0.314,1,75,0.577,0.275,0.614
+"Herbivore origin","Richness","difference among Herbivore_origin levels",0.165,1,32,0.688,0.09,0.783
+"Sensitivity: study design","Richness","difference among Design levels",0.766,1,33,0.388,1.037,0.421
+"Stratum","Diversity","difference among Stratum levels",0.498,2,14,0.618,1.568,0.337
+"Grazer size (largest class excluded)","Diversity","difference among Max_size_class levels",1.511,1,34,0.227,0.777,0.475
+"Grazer size (single-class exclosures only)","Diversity","difference among Single_size_class levels",0.01,1,24,0.92,0.018,0.898
+"Herbivore origin","Diversity","difference among Herbivore_origin levels",0.503,1,15,0.489,0.955,0.414
+"Sensitivity: study design","Diversity","difference among Design levels",2.684,1,15,0.122,4.418,0.179
