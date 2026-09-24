@@ -9,8 +9,8 @@
 #    for studies that report both.
 
 source("R/00_functions.R")
-dir.create("results/tables", recursive = TRUE, showWarnings = FALSE)
-dir.create("results/figures", recursive = TRUE, showWarnings = FALSE)
+dir.create("output/tables", recursive = TRUE, showWarnings = FALSE)
+dir.create("output/figures", recursive = TRUE, showWarnings = FALSE)
 
 raw <- read_excel(DATA_FILE, sheet = "Ecosystem_functions", .name_repair = "unique_quiet")
 ef <- tibble(
@@ -22,7 +22,7 @@ ef <- tibble(
   filter(!is.na(Study_ID), !is.na(Function_group), !is.na(n_g), !is.na(n_c)) |>
   mutate(sd_g = se_to_sd(se_g, n_g, variation), sd_c = se_to_sd(se_c, n_c, variation))
 ef <- escalc("ROM", m1i = m_c, sd1i = sd_c, n1i = n_c, m2i = m_g, sd2i = sd_g, n2i = n_g, data = ef)
-write.csv(ef, "results/tables/effect_sizes_ecosystem_functions.csv", row.names = FALSE)
+write.csv(ef, "output/tables/effect_sizes_ecosystem_functions.csv", row.names = FALSE)
 
 inv <- load_inverts() |> compute_lnrr()
 
@@ -37,7 +37,7 @@ plant_by_study <- function(group) {
 res <- list(); summ_rows <- list(); scat <- list()
 for (grp in c("Plant biomass - above-ground", "Plant biomass - below-ground")) {
   pb <- plant_by_study(grp)
-  write.csv(pb, sprintf("results/tables/plant_lnRR_by_study_%s.csv",
+  write.csv(pb, sprintf("output/tables/plant_lnRR_by_study_%s.csv",
                         ifelse(grepl("above", grp), "above", "below")), row.names = FALSE)
   for (rg in RESP_GROUPS) {
     d <- inv |> filter(Response_group == rg) |> inner_join(pb, by = "Study_ID")
@@ -59,9 +59,9 @@ for (grp in c("Plant biomass - above-ground", "Plant biomass - below-ground")) {
   }
 }
 
-write.csv(bind_rows(summ_rows), "results/tables/plant_link_sample_sizes.csv", row.names = FALSE)
+write.csv(bind_rows(summ_rows), "output/tables/plant_link_sample_sizes.csv", row.names = FALSE)
 est <- bind_rows(res)
-write.csv(est, "results/tables/plant_link_estimates.csv", row.names = FALSE)
+write.csv(est, "output/tables/plant_link_estimates.csv", row.names = FALSE)
 print(est[, c("plant_measure", "response", "term", "estimate", "ci_lb", "ci_ub", "p", "robust_p", "k", "n_studies")])
 
 if (length(scat)) {
@@ -79,5 +79,5 @@ if (length(scat)) {
          title = "Invertebrate vs plant-biomass responses to grazer exclusion",
          subtitle = "One point per study (size = precision); line and band: meta-regression fit and 95% CI") +
     theme_meta() + theme(panel.grid.major.y = element_line(colour = GRID, linewidth = 0.3))
-  ggsave("results/figures/plant_biomass_link.png", g, width = 8, height = 7.5, dpi = 250, bg = "white")
+  ggsave("output/figures/plant_biomass_link.png", g, width = 8, height = 7.5, dpi = 250, bg = "white")
 }

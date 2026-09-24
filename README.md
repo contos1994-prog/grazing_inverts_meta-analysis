@@ -15,8 +15,8 @@ track plant-biomass responses in studies that measured both.
 | `R/00_functions.R` | Shared helpers: effect sizes, covariance matrix, model fitting, plots |
 | `R/01_invertebrate_models.R` | Overall effect + all moderator analyses + sensitivity checks |
 | `R/02_plant_biomass_link.R` | Invertebrate lnRR vs plant-biomass lnRR |
-| `results/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
-| `results/figures/` | Orchard plots, time-since-exclusion bubble plots, funnel plots, plant link |
+| `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
+| `output/figures/` | Orchard plots, time-since-exclusion bubble plots, funnel plots, plant link |
 
 Run from the repo root:
 

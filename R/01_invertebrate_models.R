@@ -8,11 +8,11 @@
 # by location) are reported alongside.
 
 source("R/00_functions.R")
-dir.create("results/tables", recursive = TRUE, showWarnings = FALSE)
-dir.create("results/figures", recursive = TRUE, showWarnings = FALSE)
+dir.create("output/tables", recursive = TRUE, showWarnings = FALSE)
+dir.create("output/figures", recursive = TRUE, showWarnings = FALSE)
 
 es <- load_inverts() |> compute_lnrr()
-write.csv(es, "results/tables/effect_sizes_invertebrates.csv", row.names = FALSE)
+write.csv(es, "output/tables/effect_sizes_invertebrates.csv", row.names = FALSE)
 
 all_est <- list(); het <- list(); tests <- list(); plot_rows <- list()
 
@@ -95,7 +95,7 @@ for (rg in RESP_GROUPS) {
   dt <- d |> filter(!is.na(Years_since_exclusion)) |> mutate(log_years = log(Years_since_exclusion + 1))
   mtime <- fit_mlma(dt, ~ log_years); mtimer <- robustify(mtime, dt)
   all_est[[length(all_est) + 1]] <- tidy_fit(mtime, mtimer, dt, "Time since exclusion (ln years+1)", rg)
-  png(sprintf("results/figures/time_since_exclusion_%s.png", tolower(rg)), width = 1800, height = 1300, res = 250)
+  png(sprintf("output/figures/time_since_exclusion_%s.png", tolower(rg)), width = 1800, height = 1300, res = 250)
   regplot(mtime, mod = "log_years", xlab = "Years since exclusion (log scale, ln[years + 1])",
           ylab = "lnRR (exclosure / grazed)", pi = TRUE, shade = "#cde2fb", bg = "#2a78d655",
           col = "#2a78d6", main = paste(rg, "- time since grazer exclusion"), xvals = seq(0, 4.1, length.out = 100))
@@ -118,16 +118,16 @@ for (rg in RESP_GROUPS) {
   het[[rg]]$loo_min <- round(min(loo), 3); het[[rg]]$loo_max <- round(max(loo), 3)
   het[[rg]]$loo_most_influential <- names(loo)[which.max(abs(loo - coef(m0)[1]))]
 
-  png(sprintf("results/figures/funnel_%s.png", tolower(rg)), width = 1600, height = 1400, res = 250)
+  png(sprintf("output/figures/funnel_%s.png", tolower(rg)), width = 1600, height = 1400, res = 250)
   funnel(m0, xlab = "Residual lnRR", back = "#f0efec", shade = "white", hlines = "#e4e3df",
          pch = 21, bg = "#2a78d655", col = "#2a78d6", main = paste(rg, "- funnel plot"))
   dev.off()
 }
 
 est_tab <- bind_rows(all_est)
-write.csv(est_tab, "results/tables/model_estimates.csv", row.names = FALSE)
-write.csv(bind_rows(tests), "results/tables/moderator_tests.csv", row.names = FALSE)
-write.csv(bind_rows(het), "results/tables/heterogeneity_overall.csv", row.names = FALSE)
+write.csv(est_tab, "output/tables/model_estimates.csv", row.names = FALSE)
+write.csv(bind_rows(tests), "output/tables/moderator_tests.csv", row.names = FALSE)
+write.csv(bind_rows(het), "output/tables/heterogeneity_overall.csv", row.names = FALSE)
 
 # ---------------------------------------------------------------- figures
 plot_analysis <- function(analysis, file, level_lab, title) {
@@ -142,13 +142,13 @@ plot_analysis <- function(analysis, file, level_lab, title) {
                "Points: individual effect sizes (size = precision). Bar: 95% CI; line: 95% prediction interval.")
   ggsave(file, g, width = 7.5, height = h, dpi = 250, bg = "white")
 }
-plot_analysis("Overall", "results/figures/overall.png", NULL, "Overall effect of excluding grazers")
-plot_analysis("Stratum", "results/figures/stratum.png", NULL, "Effect of grazer exclusion by invertebrate stratum")
-plot_analysis("Grazer size (largest class excluded)", "results/figures/grazer_size.png",
+plot_analysis("Overall", "output/figures/overall.png", NULL, "Overall effect of excluding grazers")
+plot_analysis("Stratum", "output/figures/stratum.png", NULL, "Effect of grazer exclusion by invertebrate stratum")
+plot_analysis("Grazer size (largest class excluded)", "output/figures/grazer_size.png",
               "Largest grazer size class excluded", "Effect of grazer exclusion by grazer size")
-plot_analysis("Grazer size (single-class exclosures only)", "results/figures/grazer_size_single_class.png",
+plot_analysis("Grazer size (single-class exclosures only)", "output/figures/grazer_size_single_class.png",
               "Grazer size class", "Grazer size - single-class exclosures only")
-plot_analysis("Herbivore origin", "results/figures/herbivore_origin.png", NULL,
+plot_analysis("Herbivore origin", "output/figures/herbivore_origin.png", NULL,
               "Effect of excluding native vs domestic grazers")
 
-message("\nDone. Tables in results/tables, figures in results/figures.")
+message("\nDone. Tables in output/tables, figures in output/figures.")
