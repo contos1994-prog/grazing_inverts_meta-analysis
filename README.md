@@ -54,7 +54,7 @@ Richness, Diversity (Shannon and other diversity indices).
 |---|---|
 | Stratum | Above-ground / Ground & litter-dwelling (soil/litter, ground-dwelling and the 3 mixed rows) / Below-ground |
 | Grazer size | Largest size class excluded (Small < Medium < Large < Mega); categorical + linear trend. Sensitivity: single-class exclosures only. "NR" rows excluded |
-| Origin | Native vs Domestic. Mixed assemblages (22 rows) and invasive (3 rows) excluded for now |
+| Origin | Native vs Domestic. Mixed assemblages (24 rows) and invasive (3 rows) excluded for now |
 | Time since exclusion | ln(years + 1), where years = last sampling year - exclusion year, or the stated duration. Ranges use the midpoint; open-ended values (">40 years") use the bound. Every sampling year is kept as its own effect size |
 
 Levels with fewer than 3 studies are dropped from that moderator's model.
@@ -84,6 +84,8 @@ See the `Cleaning_log` sheet for the full list. In summary:
 - #3610 control SE was a broken formula (`=AG491-AG490`, pointing at another
   study) -> blanked; the row drops until re-extracted.
 - Whitespace in Study_ID / Author_Year stripped; a number stored as text converted.
+- #2025_1 partial exclosures (livestock + rabbits, rows 521 and 523) were coded Native (wild);
+  recoded to "Domestic and invasive" (Mixed), so they leave the native vs domestic test.
 - **Order** standardised (81 cells): misspellings (Aranaea, Hymenpotera, Homeptera) and
   "Spider" corrected; Homoptera merged into Hemiptera; families entered as orders moved to
   their order (Formicidae -> Hymenoptera, Lumbricidae -> Crassiclitellata, Enchytraeidae ->
