@@ -140,6 +140,90 @@ for r in rows:
                 pass
 
 
+# --- 1b. standardise Order (spelling, synonyms, wrong rank) and Trophic_Level
+c_order, c_fam = H["Order"], H["Family"]
+c_gen, c_common = H["Genus or species"], H["Common name"]
+c_troph, c_group = H["Trophic_Level"], col_by_prefix(H, "Group")
+
+ORDER_FIX = {
+    "Aranaea": ("Araneae", "misspelling"),
+    "Spider": ("Araneae", "common name entered as order"),
+    "Hymenpotera": ("Hymenoptera", "misspelling"),
+    "Homeptera": ("Hemiptera", "misspelling of Homoptera; Homoptera is now part of Hemiptera"),
+    "Homoptera": ("Hemiptera", "obsolete order; Homoptera is now part of Hemiptera"),
+    "Isoptera (Rhinotermitidae, Termitidae)": ("Isoptera", "families removed (already in Family column)"),
+}
+# family (or suborder) entered as order -> (order, family to fill if Family is blank)
+ORDER_RANK = {
+    "Formicidae": ("Hymenoptera", "Formicidae"),
+    "Lumbricidae": ("Crassiclitellata", "Lumbricidae"),
+    "Enchytraeidae": ("Enchytraeida", "Enchytraeidae"),
+    "Oribatida": ("Sarcoptiformes", "Oribatida"),   # as for #1021/#1022
+}
+# blank Order filled where the common name / group identifies it -> (order, family)
+ORDER_FILL = {
+    "spider": ("Araneae", None),
+    "ground beetle": ("Coleoptera", "Carabidae"),
+    "plant hopper": ("Hemiptera", None),
+    "nematodes": ("Nematoda", None),
+    "mites": ("Acari", None),
+    "enchytraeids": ("Enchytraeida", "Enchytraeidae"),
+    "molluscs (snails/slugs)": ("Gastropoda", None),
+}
+
+for r in rows:
+    v = ws.cell(row=r, column=c_order).value
+    s = v.replace("\xa0", " ").strip() if isinstance(v, str) else v
+    fam = ws.cell(row=r, column=c_fam).value
+    common = str(ws.cell(row=r, column=c_common).value or "").strip().lower()
+    group = str(ws.cell(row=r, column=c_group).value or "").strip()
+    new, new_fam, why = s, None, "Order: strip whitespace"
+    if s in ORDER_FIX:
+        new, why = ORDER_FIX[s][0], f"Order: {ORDER_FIX[s][1]}"
+    elif s in ORDER_RANK:
+        new, new_fam = ORDER_RANK[s]
+        why = f"Order: '{s}' is a family/suborder, not an order"
+    elif s == "Oligochaeta" and "Lumbricidae" in str(fam or ""):
+        new, why = "Crassiclitellata", "Order: Oligochaeta is a subclass; Lumbricidae + Megascolecidae are Crassiclitellata"
+    elif s == "Gastropoda" and "Helminthoglypta" in str(ws.cell(row=r, column=c_gen).value or ""):
+        new, why = "Stylommatophora", "Order: Gastropoda is a class; Helminthoglypta is Stylommatophora (as in #2176)"
+    elif s is None and common in ORDER_FILL:
+        new, new_fam = ORDER_FILL[common]
+        why = f"Order: blank, filled from common name '{common}'"
+    elif s is None and group == "Nematoda":
+        new, why = "Nematoda", "Order: blank, filled from Group 'Nematoda'"
+    set_cell(ws, r, c_order, new, why, S)
+    if new_fam and fam in (None, ""):
+        set_cell(ws, r, c_fam, new_fam, why.replace("Order:", "Family filled -"), S)
+
+TROPHIC = {
+    "herbivore": "Herbivore", "herbivores": "Herbivore",
+    "phytophagus": "Herbivore", "plant_feeders": "Herbivore",
+    "predator": "Predator", "predators": "Predator", "predatory": "Predator",
+    "carnivore": "Predator", "carnivores": "Predator", "zoophagus": "Predator",
+    "detritivore": "Detritivore", "detritivores": "Detritivore", "decomposers": "Detritivore",
+    "bacterial feeders": "Bacterivore", "bacterivores": "Bacterivore",
+    "detritivores - bacterial feeders": "Bacterivore", "detritivores -bacterivores": "Bacterivore",
+    "fungal feeders": "Fungivore", "fungivores": "Fungivore",
+    "detritivores -fungal feeders": "Fungivore", "detritivores - fungivores": "Fungivore",
+    "algal feeders": "Algivore",
+    "omnivore": "Omnivore", "omnivores": "Omnivore",
+    "parasitoid": "Parasitoid",
+    "pollinator": "Pollinator", "pollinators": "Pollinator",
+    "scavenger": "Scavenger",
+    "detritivore/herbivore": "Herbivore/detritivore", "herbivore or detritivore": "Herbivore/detritivore",
+    "total": "Total",
+}
+for r in rows:
+    v = ws.cell(row=r, column=c_troph).value
+    if v is None:
+        if ws.cell(row=r, column=c_order).value == "Araneae":
+            set_cell(ws, r, c_troph, "Predator", "Trophic_Level: blank, spiders are predators", S)
+        continue
+    key = " ".join(str(v).split()).lower()
+    new = TROPHIC[key]   # KeyError = new label in the data, add it to TROPHIC
+    set_cell(ws, r, c_troph, new, f"Trophic_Level: standardised '{v}' -> '{new}'", S)
+
 # formula cells: openpyxl cannot keep their cached values, so replace with values.
 # AH490 (#3610 control SE) is '=AG491-AG490', i.e. it subtracts this row's control
 # mean from the NEXT study's control mean -> broken; blank it so the row drops.
@@ -355,6 +439,10 @@ wl.append(["Flag: #1022 rows 249-253 have no 'Measured' value, so they are exclu
 wl.append(["Flag: #3610 (row 490) control SE was a broken formula (=AG491-AG490) - blanked; please re-extract."])
 wl.append(["Flag: #2127 time since exclusion uses '>= 10 years of grazing management' as a lower bound - check this refers to the ungrazed treatment."])
 wl.append(["Flag: n missing for #2260 (rows 162-167) and #2115 (row 491); these rows drop from the models until back-filled."])
+wl.append(["Flag: Order still holds higher ranks where the order is unknown (Acari, Collembola, Gastropoda, Nematoda); Isoptera kept although termites are now placed within Blattodea."])
+wl.append(["Flag: #1490 Order 'Lepidoptera; Hymenoptera (Symphyta)' covers two orders - left unchanged. #1505 bristletails have no Order (Archaeognatha or Zygentoma?) - please check."])
+wl.append(["Flag: #1097 has 'Total' (whole community) rows as well as rows for each trophic group - using both would double count."])
+wl.append(["Flag: possible entry errors (not changed): #3539 Hemiptera with common name 'Grasshopper'; #2115 grasshopper (Acrididae) with common name 'Leaf beetle'; spiders with Group 'Insecta' (#1125, #2260, #2394); Family typos 'Carabidiae' and 'Stapylindae' (#1190)."])
 wl.column_dimensions["C"].width = 32
 wl.column_dimensions["D"].width = 30
 wl.column_dimensions["E"].width = 30
