@@ -257,6 +257,13 @@ fill_down("#1589", [c_dur, c_dury, c_samp], "drag-fill error: exclusion year and
 fill_down("#1289", [c_auth], "drag-fill error: publication year auto-incremented")
 fill_down("#2492", [c_auth], "drag-fill error: publication year auto-incremented")
 
+# #2025_1 partial exclosures keep out livestock (domestic) and rabbits (invasive in
+# Australia) but were coded 'Native (wild)'
+for r in rows_of("#2025_1"):
+    if str(ws.cell(row=r, column=H["Animal excluded"]).value).strip() == "Livestock and Rabbits":
+        set_cell(ws, r, c_herb, "Domestic and invasive",
+                 "excluded livestock (domestic) and rabbits (invasive in Australia), not native grazers", S)
+
 # --- 3. Excel serial-number year bug (e.g. 1999 shown as 1905-06-21)
 for r in rows:
     v = ws.cell(row=r, column=c_dury).value
@@ -327,7 +334,7 @@ def herbivore_origin(v):
     s = (v or "").lower().replace(" ", "")
     if s in ("native(wild)", "native", "native/wild", "wild", "wild/native"):
         return "Native"
-    if s.startswith("domestic"):          # includes 'Domestic - native' (native breed of livestock)
+    if s.startswith("domestic") and "invasive" not in s:   # includes 'Domestic - native' (native breed of livestock)
         return "Domestic"
     if s == "invasive":
         return "Invasive"
