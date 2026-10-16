@@ -84,6 +84,22 @@ See the `Cleaning_log` sheet for the full list. In summary:
 - #3610 control SE was a broken formula (`=AG491-AG490`, pointing at another
   study) -> blanked; the row drops until re-extracted.
 - Whitespace in Study_ID / Author_Year stripped; a number stored as text converted.
+- **Order** standardised (81 cells): misspellings (Aranaea, Hymenpotera, Homeptera) and
+  "Spider" corrected; Homoptera merged into Hemiptera; families entered as orders moved to
+  their order (Formicidae -> Hymenoptera, Lumbricidae -> Crassiclitellata, Enchytraeidae ->
+  Enchytraeida, Oribatida -> Sarcoptiformes), with the family written into a blank Family
+  cell (18 cells); earthworms and *Helminthoglypta* moved from class to order; blank Orders
+  filled where the common name identifies the taxon (spiders, ground beetles, plant hoppers,
+  nematodes, mites, enchytraeids, molluscs). Higher ranks are kept where the order is unknown
+  (Acari, Collembola, Gastropoda, Nematoda).
+- **Trophic_Level** standardised (248 cells) to singular labels: Herbivore (incl. phytophagous,
+  plant feeders), Predator (incl. carnivore, zoophagous, predatory), Detritivore (incl.
+  decomposers), Bacterivore, Fungivore, Algivore (nematode feeding groups), Omnivore,
+  Parasitoid, Pollinator, Scavenger, Herbivore/detritivore, Total. Blank trophic level set
+  to Predator for spiders.
+- Order and Trophic_Level are not yet used in the models, so these changes do not alter results.
+  Remaining taxonomic queries (e.g. #1097 "Total" rows, mismatched common names) are flagged
+  at the bottom of `Cleaning_log`.
 
 **Rows currently dropped:** missing n (#2260 x6, #2115 x1), missing SE
 (#3610 x1), no response type (#1022 nematodes x5, one "Functional richness" row).
