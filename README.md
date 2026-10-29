@@ -19,8 +19,10 @@ track plant-biomass responses in studies that measured both.
 | `R/02_plant_biomass_link.R` | Invertebrate lnRR vs plant-biomass lnRR |
 | `R/03_trophic_level.R` | Effect by invertebrate trophic level, overall and native vs domestic |
 | `R/04_biome.R` | Effect by biome |
+| `R/05_figures.R` | All publication figures (PDF + 600 dpi PNG, 183 mm wide) from the model tables |
+| `docs/Methods_Results.docx` | Draft Methods and Results with tables and figures (`docs/build_methods_results.js` builds it) |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
-| `output/figures/` | Orchard plots, time-since-exclusion bubble plots, funnel plots, plant link |
+| `output/figures/` | Fig1 site map; Fig2 overall + stratum; Fig3 grazer size; Fig4 origin + time; Fig5 trophic level; Fig6 biome + plant biomass; FigS1 funnel plots |
 
 Run from the repo root:
 
@@ -29,6 +31,7 @@ Rscript R/01_invertebrate_models.R   # ~10 min (leave-one-study-out refits)
 Rscript R/02_plant_biomass_link.R
 Rscript R/03_trophic_level.R         # ~30 s
 Rscript R/04_biome.R
+Rscript R/05_figures.R               # needs patchwork, sf, maps, ragg
 ```
 
 `data/study_biomes.csv` only needs regenerating if site coordinates change:

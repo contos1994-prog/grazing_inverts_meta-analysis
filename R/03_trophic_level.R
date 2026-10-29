@@ -34,7 +34,7 @@ es <- es |> filter(!is.na(Trophic_Level), !Trophic_Level %in% UNCLEAR_TROPHIC)
 message(sprintf("Trophic analyses: dropped %d rows with blank or unclear trophic level (%s)",
                 n_all - nrow(es), paste(UNCLEAR_TROPHIC, collapse = ", ")))
 
-all_est <- list(); tests <- list(); contrasts <- list(); plot_rows <- list()
+all_est <- list(); tests <- list(); contrasts <- list()
 
 try_fit <- function(d, mods, what) {
   tryCatch(fit_mlma(d, mods), error = function(e) { message("  ", what, " failed: ", conditionMessage(e)); NULL })
@@ -51,21 +51,6 @@ record_test <- function(m, mr, analysis, response, what, btt = NULL) {
     robust_F = if (is.na(ar$QMp)) NA else round(ar$QM, 3), robust_p = signif(ar$QMp, 3))
 }
 
-add_plot_rows <- function(m, d, var, analysis, response) {
-  lv <- levels(d[[var]])
-  p <- predict(m, newmods = diag(length(lv)))
-  s <- data.frame(level = lv, estimate = p$pred, ci_lb = p$ci.lb, ci_ub = p$ci.ub,
-                  pi_lb = p$pi.lb, pi_ub = p$pi.ub)
-  cnt <- d |> group_by(level = as.character(.data[[var]])) |>
-    summarise(k = n(), ns = n_distinct(Study_ID), .groups = "drop")
-  s <- left_join(s, cnt, by = "level")
-  s$lab <- sprintf("k = %d (%d studies)", s$k, s$ns)
-  s$response <- response; s$analysis <- analysis
-  eff <- data.frame(level = as.character(d[[var]]), yi = d$yi, vi = d$vi,
-                    response = response, analysis = analysis)
-  plot_rows[[length(plot_rows) + 1]] <<- list(summ = s, eff = eff)
-}
-
 # categorical moderator: cell-means model for level estimates + intercept
 # model for the omnibus "do levels differ?" test (as in R/01)
 run_categorical <- function(d, var, analysis, response) {
@@ -77,7 +62,6 @@ run_categorical <- function(d, var, analysis, response) {
   all_est[[length(all_est) + 1]] <<- tidy_fit(m, mr, d, analysis, response, var)
   m2 <- try_fit(d, as.formula(paste("~", var)), analysis)
   if (!is.null(m2)) record_test(m2, robustify(m2, d), analysis, response, paste("difference among", var, "levels"))
-  add_plot_rows(m, d, var, analysis, response)
 }
 
 for (rg in RESP_GROUPS) {
@@ -139,36 +123,4 @@ write.csv(bind_rows(all_est), "output/tables/trophic_estimates.csv", row.names =
 write.csv(bind_rows(tests), "output/tables/trophic_tests.csv", row.names = FALSE)
 write.csv(bind_rows(contrasts), "output/tables/trophic_origin_contrasts.csv", row.names = FALSE)
 
-# ---------------------------------------------------------------- figures
-SUB <- "Points: effect sizes (size = precision)\nThick bar: 95% CI; thin line: 95% prediction interval"
-collect <- function(analyses) {
-  pr <- Filter(function(x) x$summ$analysis[1] %in% analyses, plot_rows)
-  list(summ = bind_rows(lapply(pr, `[[`, "summ")), eff = bind_rows(lapply(pr, `[[`, "eff")))
-}
-save_orchard <- function(p, file, title) {
-  if (!nrow(p$summ)) return(invisible())
-  lv <- rev(unique(p$summ$level))
-  p$summ$level <- factor(p$summ$level, lv); p$eff$level <- factor(p$eff$level, lv)
-  rs <- intersect(RESP_GROUPS, p$summ$response)
-  p$summ$response <- factor(p$summ$response, rs); p$eff$response <- factor(p$eff$response, rs)
-  h <- 1.2 + 0.55 * nrow(p$summ) + 0.6 * length(rs)
-  ggsave(file, orchard(p$eff, p$summ, NULL, title, SUB), width = 7.5, height = h, dpi = 250, bg = "white")
-}
-
-save_orchard(collect("Trophic level"), "output/figures/trophic_level.png",
-             "Effect of grazer exclusion by invertebrate trophic level")
-
-# within-origin estimates, labelled "Trophic level (origin)"
-p <- collect(c("Trophic level (native exclusion)", "Trophic level (domestic exclusion)"))
-if (nrow(p$summ)) {
-  relab <- function(df) {
-    o <- ifelse(grepl("native", df$analysis), "Native", "Domestic")
-    df$level <- paste0(df$level, " (", o, ")"); df
-  }
-  p$summ <- relab(p$summ); p$eff <- relab(p$eff)
-  p$summ <- p$summ[order(p$summ$response, p$summ$level), ]
-  save_orchard(p, "output/figures/trophic_level_by_origin.png",
-               "Grazer exclusion by trophic level: native vs domestic grazers")
-}
-
-message("\nDone. Trophic-level tables in output/tables (trophic_*.csv), figures in output/figures.")
+message("\nDone. Trophic-level tables in output/tables (trophic_*.csv); figures are drawn by R/05_figures.R.")

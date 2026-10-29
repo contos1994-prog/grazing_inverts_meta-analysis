@@ -14,30 +14,7 @@ dir.create("output/figures", recursive = TRUE, showWarnings = FALSE)
 es <- load_inverts() |> compute_lnrr()
 write.csv(es, "output/tables/effect_sizes_invertebrates.csv", row.names = FALSE)
 
-all_est <- list(); het <- list(); tests <- list(); plot_rows <- list()
-
-add_plot_rows <- function(m, d, analysis, response, level_var = NULL) {
-  if (is.null(level_var)) {
-    p <- predict(m)
-    s <- data.frame(level = "Overall", estimate = p$pred[1], ci_lb = p$ci.lb[1], ci_ub = p$ci.ub[1],
-                    pi_lb = p$pi.lb[1], pi_ub = p$pi.ub[1])
-    cnt <- data.frame(level = "Overall", k = nrow(d), ns = n_distinct(d$Study_ID))
-  } else {
-    lv <- levels(d[[level_var]])
-    X <- diag(length(lv))
-    p <- predict(m, newmods = X)
-    s <- data.frame(level = lv, estimate = p$pred, ci_lb = p$ci.lb, ci_ub = p$ci.ub,
-                    pi_lb = p$pi.lb, pi_ub = p$pi.ub)
-    cnt <- d |> group_by(level = as.character(.data[[level_var]])) |>
-      summarise(k = n(), ns = n_distinct(Study_ID), .groups = "drop")
-  }
-  s <- left_join(s, cnt, by = "level")
-  s$lab <- sprintf("k = %d (%d studies)", s$k, s$ns)
-  s$response <- response; s$analysis <- analysis
-  eff <- data.frame(level = if (is.null(level_var)) "Overall" else as.character(d[[level_var]]),
-                    yi = d$yi, vi = d$vi, response = response, analysis = analysis)
-  plot_rows[[length(plot_rows) + 1]] <<- list(summ = s, eff = eff)
-}
+all_est <- list(); het <- list(); tests <- list(); time_fits <- list()
 
 record_test <- function(m, mr, analysis, response, what) {
   tests[[length(tests) + 1]] <<- data.frame(
@@ -57,7 +34,6 @@ run_categorical <- function(d, var, analysis, response) {
   all_est[[length(all_est) + 1]] <<- tidy_fit(m, mr, d, analysis, response, var)
   m2 <- fit_mlma(d, f_diff); mr2 <- robustify(m2, d)
   record_test(m2, mr2, analysis, response, paste("difference among", var, "levels"))
-  add_plot_rows(m, d, analysis, response, var)
 }
 
 for (rg in RESP_GROUPS) {
@@ -72,7 +48,6 @@ for (rg in RESP_GROUPS) {
                           sigma2_location = m0$sigma2[1], sigma2_study = m0$sigma2[2],
                           sigma2_within = m0$sigma2[3], Q = round(m0$QE, 1), Q_p = signif(m0$QEp, 3),
                           t(i2_ml(m0)))
-  add_plot_rows(m0, d, "Overall", rg)
 
   # ---- H2: above- vs ground/litter- vs below-ground
   run_categorical(d |> filter(!is.na(Stratum)), "Stratum", "Stratum", rg)
@@ -95,12 +70,9 @@ for (rg in RESP_GROUPS) {
   dt <- d |> filter(!is.na(Years_since_exclusion)) |> mutate(log_years = log(Years_since_exclusion + 1))
   mtime <- fit_mlma(dt, ~ log_years); mtimer <- robustify(mtime, dt)
   all_est[[length(all_est) + 1]] <- tidy_fit(mtime, mtimer, dt, "Time since exclusion (ln years+1)", rg)
-  png(sprintf("output/figures/time_since_exclusion_%s.png", tolower(rg)), width = 1800, height = 1300, res = 250)
-  regplot(mtime, mod = "log_years", xlab = "Years since exclusion (log scale, ln[years + 1])",
-          ylab = "lnRR (exclosure / grazed)", pi = TRUE, shade = "#cde2fb", bg = "#2a78d655",
-          col = "#2a78d6", main = paste(rg, "- time since grazer exclusion"), xvals = seq(0, 4.1, length.out = 100))
-  abline(h = 0, lty = 2, col = "#52514e")
-  dev.off()
+  # fitted line + 95% CI for plotting (R/05_figures.R)
+  xs <- seq(0, max(dt$log_years), length.out = 100); pt <- predict(mtime, newmods = xs)
+  time_fits[[rg]] <- data.frame(response = rg, log_years = xs, pred = pt$pred, ci_lb = pt$ci.lb, ci_ub = pt$ci.ub)
 
   # ---- sensitivity analyses
   run_categorical(d, "Design", "Sensitivity: study design", rg)
@@ -118,37 +90,12 @@ for (rg in RESP_GROUPS) {
   het[[rg]]$loo_min <- round(min(loo), 3); het[[rg]]$loo_max <- round(max(loo), 3)
   het[[rg]]$loo_most_influential <- sub("\\.intrcpt$", "", names(loo)[which.max(abs(loo - coef(m0)[1]))])
 
-  png(sprintf("output/figures/funnel_%s.png", tolower(rg)), width = 1600, height = 1400, res = 250)
-  funnel(m0, xlab = "Residual lnRR", back = "#f0efec", shade = "white", hlines = "#e4e3df",
-         pch = 21, bg = "#2a78d655", col = "#2a78d6", main = paste(rg, "- funnel plot"))
-  dev.off()
 }
 
 est_tab <- bind_rows(all_est)
 write.csv(est_tab, "output/tables/model_estimates.csv", row.names = FALSE)
 write.csv(bind_rows(tests), "output/tables/moderator_tests.csv", row.names = FALSE)
 write.csv(bind_rows(het), "output/tables/heterogeneity_overall.csv", row.names = FALSE)
+write.csv(bind_rows(time_fits), "output/tables/time_since_exclusion_fit.csv", row.names = FALSE)
 
-# ---------------------------------------------------------------- figures
-plot_analysis <- function(analysis, file, level_lab, title) {
-  pr <- Filter(function(x) x$summ$analysis[1] == analysis, plot_rows)
-  if (!length(pr)) return(invisible())
-  summ <- bind_rows(lapply(pr, `[[`, "summ")); eff <- bind_rows(lapply(pr, `[[`, "eff"))
-  lv <- rev(unique(summ$level))
-  summ$level <- factor(summ$level, lv); eff$level <- factor(eff$level, lv)
-  summ$response <- factor(summ$response, RESP_GROUPS); eff$response <- factor(eff$response, RESP_GROUPS)
-  h <- 1.2 + 0.55 * nrow(summ) + 0.6 * length(unique(summ$response))
-  g <- orchard(eff, summ, level_lab, title,
-               "Points: effect sizes (size = precision)\nThick bar: 95% CI; thin line: 95% prediction interval")
-  ggsave(file, g, width = 7.5, height = h, dpi = 250, bg = "white")
-}
-plot_analysis("Overall", "output/figures/overall.png", NULL, "Overall effect of excluding grazers")
-plot_analysis("Stratum", "output/figures/stratum.png", NULL, "Effect of grazer exclusion by invertebrate stratum")
-plot_analysis("Grazer size (largest class excluded)", "output/figures/grazer_size.png",
-              "Largest grazer size class excluded", "Effect of grazer exclusion by grazer size")
-plot_analysis("Grazer size (single-class exclosures only)", "output/figures/grazer_size_single_class.png",
-              "Grazer size class", "Grazer size - single-class exclosures only")
-plot_analysis("Herbivore origin", "output/figures/herbivore_origin.png", NULL,
-              "Effect of excluding native vs domestic grazers")
-
-message("\nDone. Tables in output/tables, figures in output/figures.")
+message("\nDone. Tables in output/tables; figures are drawn by R/05_figures.R.")
