@@ -1,0 +1,4 @@
+"analysis","response","test","F","df1","df2","p","robust_F","robust_p"
+"Biome","Abundance","difference among Biome levels",1.208,6,33,0.327,0.251,0.926
+"Biome","Richness","difference among Biome levels",0.363,4,20,0.832,3.08,0.157
+"Biome","Diversity","difference among Biome levels",0.933,3,8,0.468,0.314,0.818

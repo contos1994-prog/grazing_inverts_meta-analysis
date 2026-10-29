@@ -1,0 +1,83 @@
+"Study_ID","Latitude_decimal","Longitude_decimal","query_lat","query_lon","coord_source","coord_note","match","BIOME_NAME","BIOME_NUM","ECO_NAME","REALM","Biomes_as_entered"
+"#1013",32.8,102.55,32.8,102.55,"data","","point in polygon","Montane Grasslands & Shrublands",10,"Southeast Tibet shrublands and meadows","Palearctic",NA
+"#1021",66.37,29.32,66.37,29.32,"data","","point in polygon","Boreal Forests/Taiga",6,"Scandinavian and Russian taiga","Palearctic","Boreal forest"
+"#1022",66.37,29.32,66.37,29.32,"data","","point in polygon","Boreal Forests/Taiga",6,"Scandinavian and Russian taiga","Palearctic","Boreal forest"
+"#1028",46.65,10.18,46.65,10.18,"data","","point in polygon","Temperate Conifer Forests",5,"Alps conifer and mixed forests","Palearctic",NA
+"#1045",-27.8,32.32,-27.8,32.32,"data","","point in polygon","Tropical & Subtropical Moist Broadleaf Forests",1,"Maputaland coastal forests and woodlands","Afrotropic","Subtropical (summer rainy season Nov-Apr)"
+"#1048",NA,NA,39.13,-84.25,"manual","approximate: Cincinnati Nature Center, Ohio","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Southern Great Lakes forests","Nearctic",NA
+"#1068",31.467,121.933,31.467,121.933,"data","","nearest ecoregion, ~7 km","Temperate Broadleaf & Mixed Forests",4,"Changjiang Plain evergreen forests","Palearctic","Coastal wetland/saltmarsh"
+"#1078",45.23,123.35,45.23,123.35,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Temperate steppe"
+"#1088",46.65,10.18,46.65,10.18,"data","","point in polygon","Temperate Conifer Forests",5,"Alps conifer and mixed forests","Palearctic",NA
+"#1097",53.33,6.23,53.33,6.23,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"European Atlantic mixed forests","Palearctic","Temperate grassland"
+"#1103",46.65,10.18,46.65,10.18,"data","","point in polygon","Temperate Conifer Forests",5,"Alps conifer and mixed forests","Palearctic",NA
+"#1111",56.2666666666667,-4.4,56.2666666666667,-4.4,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic",NA
+"#1123",44.75,123.75,44.75,123.75,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic",NA
+"#1125",53.6875,-2.95111111111111,53.6875,-2.95111111111111,"data","","nearest ecoregion, ~1 km","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic",NA
+"#1154",48.717,119.917,48.717,119.917,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Temperate grassland"
+"#1157",46.65,10.18,46.65,10.18,"data","","point in polygon","Temperate Conifer Forests",5,"Alps conifer and mixed forests","Palearctic","Alpine/Subalpine"
+"#1180",35.594,-83.842,35.594,-83.842,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Appalachian-Blue Ridge forests","Nearctic","Temperate deciduous forest"
+"#1190",42.6583333333333,-5.025,42.6583333333333,-5.025,"data","","point in polygon","Mediterranean Forests, Woodlands & Scrub",12,"Northwest Iberian montane forests","Palearctic","Sub-humid Mediterranean"
+"#1193",0.33,36.88,0.33,36.88,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Northern Acacia-Commiphora bushlands and thickets","Afrotropic","Savanna"
+"#1209",44.5925,123.513055555556,44.5925,123.513055555556,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic",NA
+"#1213",74.4666666666667,-20.5666666666667,74.4666666666667,-20.5666666666667,"data","","point in polygon","Tundra",11,"Kalaallit Nunaat Arctic steppe","Nearctic","High Arctic"
+"#1278",NA,NA,29.58,101.88,"manual","approximate: Gongga Mountain alpine station, Sichuan","point in polygon","Montane Grasslands & Shrublands",10,"Southeast Tibet shrublands and meadows","Palearctic","NR"
+"#1289",-28.22,31.92,-28.22,31.92,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Limpopo lowveld","Afrotropic","African Savannah"
+"#1312",41.79,111.9,41.79,111.9,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Temperate desert steppe"
+"#1318",32,78,32,78,"data","","point in polygon","Montane Grasslands & Shrublands",10,"Northwestern Himalayan alpine shrub and meadows","Palearctic","Alpine/Trans-Himalayan"
+"#1320",38.833,-8.817,38.833,-8.817,"data","","point in polygon","Mediterranean Forests, Woodlands & Scrub",12,"Southwest Iberian Mediterranean sclerophyllous and mixed forests","Palearctic","Mediterranean savanna-woodland (Montado/dehesa)"
+"#1349",NA,NA,41.88,-89.34,"manual","approximate: Nachusa Grasslands, Illinois","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Central US forest-grasslands transition","Nearctic","Temperate grassland"
+"#1355",46.65,10.18,46.65,10.18,"data","","point in polygon","Temperate Conifer Forests",5,"Alps conifer and mixed forests","Palearctic",NA
+"#1393",44.75,123.75,44.75,123.75,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic",NA
+"#1423",44.75,123.783,44.75,123.783,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Temperate grassland"
+"#1470",50.93,8.82,50.93,8.82,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Western European broadleaf forests","Palearctic","Temperate forest"
+"#1485",0.283,37.867,0.283,37.867,"data","","point in polygon","Tropical & Subtropical Moist Broadleaf Forests",1,"East African montane forests","Afrotropic","Savanna"
+"#1490",61.5,5.08333333333333,61.5,5.08333333333333,"data","","nearest ecoregion, ~5 km","Temperate Conifer Forests",5,"Scandinavian coastal conifer forests","Palearctic",NA
+"#1503",NA,NA,53.07,-4.05,"manual","approximate: Llyn Llydaw, Snowdonia","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic",NA
+"#1505",38.19,-122.95,38.19,-122.95,"data","","point in polygon","Temperate Conifer Forests",5,"Northern California coastal forests","Nearctic","Mediterranean coastal grassland"
+"#1508",44.75,123.75,44.75,123.75,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Temperate steppe"
+"#1511",46.65,10.18,46.65,10.18,"data","","point in polygon","Temperate Conifer Forests",5,"Alps conifer and mixed forests","Palearctic",NA
+"#1515",52.0167,5.8,52.0167,5.8,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"European Atlantic mixed forests","Palearctic",NA
+"#1520",36.82,-96.38,36.82,-96.38,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Flint Hills tallgrass prairie","Nearctic","Temperate grassland"
+"#1532",35.78,-106.27,35.78,-106.27,"data","","point in polygon","Temperate Conifer Forests",5,"Colorado Rockies forests","Nearctic","Temperate montane grassland/woodland"
+"#1585",44.25,116.53,44.25,116.53,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Temperate grassland"
+"#1589",NA,NA,31.59,-110.51,"manual","approximate: Appleton-Whittell Research Ranch, Arizona","point in polygon","Deserts & Xeric Shrublands",13,"Chihuahuan desert","Nearctic","NR"
+"#1603",46.35,20.85,46.35,20.85,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Pannonian mixed forests","Palearctic","Temperate grassland"
+"#1609",NA,NA,40,-3.7,"manual","approximate: Spain, site not given (central Spain assumed), ambiguous","point in polygon","Mediterranean Forests, Woodlands & Scrub",12,"Iberian sclerophyllous and semi-deciduous forests","Palearctic",NA
+"#1624",35.267,-111.683,35.267,-111.683,"data","","point in polygon","Temperate Conifer Forests",5,"Arizona Mountains forests","Nearctic","Temperate coniferous forest"
+"#1662",69.0166666666667,20.8333333333333,69.0166666666667,20.8333333333333,"data","","point in polygon","Tundra",11,"Scandinavian Montane Birch forest and grasslands","Palearctic",NA
+"#1684",56.27,-4.4,56.27,-4.4,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic","Temperate upland grassland"
+"#1687",18.336,-98.156,18.336,-98.156,"data","","point in polygon","Tropical & Subtropical Coniferous Forests",3,"Trans-Mexican Volcanic Belt pine-oak forests","Neotropic","Tropical dry forest"
+"#1690",37,25.3,37,25.3,"data","","nearest ecoregion, ~7 km","Mediterranean Forests, Woodlands & Scrub",12,"Aegean and Western Turkey sclerophyllous and mixed forests","Palearctic","Mediterranean shrubland/heath"
+"#1693",35,140,35,140,"data","","nearest ecoregion, ~1 km","Temperate Broadleaf & Mixed Forests",4,"Taiheiyo evergreen forests","Palearctic",NA
+"#1708",44.75,123.75,44.75,123.75,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Temperate grassland"
+"#1788",45.4,25.517,45.4,25.517,"data","","point in polygon","Temperate Conifer Forests",5,"Carpathian montane forests","Palearctic","Alpine grassland"
+"#1796",NA,NA,52.35,0.3,"manual","approximate: tall-herb fen, England, exact site not given (East Anglian fens assumed)","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic","Temperate wetland"
+"#1801",-29.667,29.917,-29.667,29.917,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Drakensberg grasslands","Afrotropic","Temperate grassland"
+"#1810",41.241,-81.553,41.241,-81.553,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Southern Great Lakes forests","Nearctic","Temperate deciduous forest/old-field mosaic"
+"#1825",NA,NA,60,16,"manual","approximate: 16 stands across three latitudes in Sweden; mid-latitude point used, ambiguous","point in polygon","Boreal Forests/Taiga",6,"Scandinavian and Russian taiga","Palearctic","Boreal forest"
+"#1863",68.9166666666667,20.9833333333333,68.9166666666667,20.9833333333333,"data","","point in polygon","Tundra",11,"Scandinavian Montane Birch forest and grasslands","Palearctic","Orohemiarctic"
+"#1866",-18.9666666666667,34.3333333333333,-18.9666666666667,34.3333333333333,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Zambezian-Limpopo mixed woodlands","Afrotropic","Mesic savanna (dry season Apr-Nov)"
+"#1875",56.27,-4.4,56.27,-4.4,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic","Temperate upland grassland"
+"#2025_1",-36.7666666666667,149.683333333333,-36.7666666666667,149.683333333333,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Southeast Australia temperate forests","Australasia",NA
+"#2025_2",44.59,123.51,44.59,123.51,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic","Semi-arid continental"
+"#2025_3",45.575,24.4083333333333,45.575,24.4083333333333,"data","","point in polygon","Temperate Conifer Forests",5,"Carpathian montane forests","Palearctic","Alpine"
+"#2025_4",45.2,-118.05,45.2,-118.05,"data","","point in polygon","Temperate Conifer Forests",5,"Blue Mountains forests","Nearctic","Temperate"
+"#2026_1",0.225277777777778,37.4408333333333,0.225277777777778,37.4408333333333,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Northern Acacia-Commiphora bushlands and thickets","Afrotropic","Savanna"
+"#2026_2",33.5666666666667,102.25,33.5666666666667,102.25,"data","","point in polygon","Montane Grasslands & Shrublands",10,"Southeast Tibet shrublands and meadows","Palearctic",NA
+"#2027",-31.6333333333333,117.716666666667,-31.6333333333333,117.716666666667,"data","","point in polygon","Mediterranean Forests, Woodlands & Scrub",12,"Southwest Australia savanna","Australasia",NA
+"#2078",0.283,36.867,0.283,36.867,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Northern Acacia-Commiphora bushlands and thickets","Afrotropic","Savanna"
+"#2091",NA,NA,39.2,-76.88,"manual","approximate: Middle Patuxent Environmental Area, Maryland","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Northeast US Coastal forests","Nearctic",NA
+"#2115",43.5333333333333,116.533333333333,43.5333333333333,116.533333333333,"data","","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Mongolian-Manchurian grassland","Palearctic",NA
+"#2127",57.5,-2.74,57.5,-2.74,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic","Temperate woodland"
+"#2176",38.3166666666667,-123.05,38.3166666666667,-123.05,"data","","nearest ecoregion, ~0 km","Temperate Conifer Forests",5,"Northern California coastal forests","Nearctic",NA
+"#2189",NA,NA,43.85,-102.25,"manual","approximate: Badlands National Park North Unit, South Dakota","point in polygon","Temperate Grasslands, Savannas & Shrublands",8,"Northern Shortgrass prairie","Nearctic",NA
+"#2201",0.283333333333333,36.8666666666667,0.283333333333333,36.8666666666667,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Northern Acacia-Commiphora bushlands and thickets","Afrotropic",NA
+"#2260",NA,NA,57,-4,"manual","approximate: centroid of 8 Scottish native pinewoods","point in polygon","Temperate Conifer Forests",5,"Caledon conifer forests","Palearctic",NA
+"#2347",57.21,-5,57.21,-5,"data","","point in polygon","Temperate Conifer Forests",5,"Caledon conifer forests","Palearctic","Temperate forest"
+"#2386",NA,NA,37.1,-3,"manual","approximate: SE Spain montane (Sierra Nevada assumed)","point in polygon","Mediterranean Forests, Woodlands & Scrub",12,"Iberian conifer forests","Palearctic",NA
+"#2394",56.2666666666667,-4.4,56.2666666666667,-4.4,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Celtic broadleaf forests","Palearctic",NA
+"#2492",41.5,-81.5,41.5,-81.5,"data","","point in polygon","Temperate Broadleaf & Mixed Forests",4,"Southern Great Lakes forests","Nearctic","Temperate forest"
+"#2758",38.3175,-123.071944444444,38.3175,-123.071944444444,"data","","point in polygon","Temperate Conifer Forests",5,"Northern California coastal forests","Nearctic",NA
+"#3069",33.333,97.417,33.333,97.417,"data","","point in polygon","Montane Grasslands & Shrublands",10,"Southeast Tibet shrublands and meadows","Palearctic","Qinghai-Tibetan Plateau alpine"
+"#3539",0.283333333333333,36.8833333333333,0.283333333333333,36.8833333333333,"data","","point in polygon","Tropical & Subtropical Grasslands, Savannas & Shrublands",7,"Northern Acacia-Commiphora bushlands and thickets","Afrotropic",NA
+"#3610",NA,NA,31.59,-110.51,"manual","approximate: Appleton-Whittell Research Ranch, Arizona","point in polygon","Deserts & Xeric Shrublands",13,"Chihuahuan desert","Nearctic",NA

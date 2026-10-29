@@ -11,11 +11,14 @@ track plant-biomass responses in studies that measured both.
 |---|---|
 | `MetaAnalysis_data.xlsx` | Original data (unchanged) |
 | `MetaAnalysis_data_v2.xlsx` | Cleaned data used by the analysis. Yellow cells = edited, blue columns = derived; every edit is listed in the `Cleaning_log` sheet |
+| `scripts/01_extract_biomes.R` | Assigns a RESOLVE Ecoregions 2017 biome to each study site -> `data/study_biomes.csv` |
+| `data/study_biomes.csv` | Biome and ecoregion per study site, with coordinate source and match notes |
 | `scripts/00_make_v2.py` | Builds v2 from the original (`python3 scripts/00_make_v2.py`, needs `openpyxl`) |
 | `R/00_functions.R` | Shared helpers: effect sizes, covariance matrix, model fitting, plots |
 | `R/01_invertebrate_models.R` | Overall effect + all moderator analyses + sensitivity checks |
 | `R/02_plant_biomass_link.R` | Invertebrate lnRR vs plant-biomass lnRR |
 | `R/03_trophic_level.R` | Effect by invertebrate trophic level, overall and native vs domestic |
+| `R/04_biome.R` | Effect by biome |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
 | `output/figures/` | Orchard plots, time-since-exclusion bubble plots, funnel plots, plant link |
 
@@ -25,7 +28,11 @@ Run from the repo root:
 Rscript R/01_invertebrate_models.R   # ~10 min (leave-one-study-out refits)
 Rscript R/02_plant_biomass_link.R
 Rscript R/03_trophic_level.R         # ~30 s
+Rscript R/04_biome.R
 ```
+
+`data/study_biomes.csv` only needs regenerating if site coordinates change:
+`Rscript scripts/01_extract_biomes.R` (downloads the ~150 MB RESOLVE shapefile; needs `sf`).
 
 R packages: `metafor`, `clubSandwich`, `readxl`, `dplyr`, `tidyr`, `ggplot2`.
 
@@ -60,6 +67,7 @@ Richness, Diversity (Shannon and other diversity indices).
 | Time since exclusion | ln(years + 1), where years = last sampling year - exclusion year, or the stated duration. Ranges use the midpoint; open-ended values (">40 years") use the bound. Every sampling year is kept as its own effect size |
 
 | Trophic level (`R/03`) | Cleaned `Trophic_Level` labels used as they are (no merging into broader guilds). Rows with a blank, "Total" or "Herbivore/detritivore" trophic level are excluded. (a) All exclusions (all origins); (b) native vs domestic: trophic-level models fitted within each origin, plus a joint Trophic x Origin model on trophic levels with >= 3 studies in both origins, giving an omnibus interaction test and a Domestic - Native contrast per trophic level |
+| Biome (`R/04`) | RESOLVE Ecoregions 2017 biome (Dinerstein et al. 2017; the layer served on ArcGIS Online as "Biomes") at each site, by point-in-polygon; sites just off a polygon edge take the nearest ecoregion within 25 km. 13 studies without coordinates were placed from their site description (`coord_source = manual`; #1609 and #1825 are ambiguous). RESOLVE biomes describe potential natural vegetation, so many grazed grasslands fall in forest biomes |
 
 Levels with fewer than 3 studies are dropped from that moderator's model.
 The omnibus F-test for "do levels differ?" is in `moderator_tests.csv`.

@@ -1,0 +1,29 @@
+"Biome","Response_group","k","n_studies"
+"Temperate broadleaf forest","Abundance",133,18
+"Temperate conifer forest","Abundance",148,15
+"Temperate grassland","Abundance",53,11
+"Tropical savanna","Abundance",35,8
+"Mediterranean","Abundance",21,4
+"Boreal forest","Abundance",3,3
+"Tundra","Abundance",6,3
+"Montane grassland","Abundance",7,2
+"Tropical moist forest","Abundance",4,2
+"Desert & xeric shrubland","Abundance",6,1
+"Tropical conifer forest","Abundance",1,1
+"Temperate grassland","Diversity",11,4
+"Montane grassland","Diversity",9,3
+"Temperate broadleaf forest","Diversity",5,3
+"Temperate conifer forest","Diversity",10,3
+"Mediterranean","Diversity",3,2
+"Desert & xeric shrubland","Diversity",6,1
+"Tropical moist forest","Diversity",2,1
+"Temperate broadleaf forest","Richness",23,9
+"Temperate conifer forest","Richness",58,9
+"Mediterranean","Richness",6,4
+"Temperate grassland","Richness",8,4
+"Montane grassland","Richness",7,3
+"Tropical savanna","Richness",3,2
+"Desert & xeric shrubland","Richness",6,1
+"Tropical conifer forest","Richness",1,1
+"Tropical moist forest","Richness",2,1
+"Tundra","Richness",1,1
