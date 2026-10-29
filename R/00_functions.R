@@ -150,42 +150,28 @@ keep_levels <- function(d, var, min_studies = MIN_STUDIES_PER_LEVEL) {
   out
 }
 
-# ------------------------------------------------------------------ plots
-INK <- "#0b0b0b"; INK2 <- "#52514e"; GRID <- "#e4e3df"; SERIES <- "#2a78d6"
+# ------------------------------------------------------------------ biome
+# RESOLVE 2017 biome per row, from data/study_biomes.csv (scripts/01_extract_biomes.R),
+# matched on Study_ID + coordinates (rows without coordinates match on Study_ID)
+BIOME_LABELS <- c(
+  "Boreal Forests/Taiga" = "Boreal forest",
+  "Deserts & Xeric Shrublands" = "Desert & xeric shrubland",
+  "Flooded Grasslands & Savannas" = "Flooded grassland",
+  "Mediterranean Forests, Woodlands & Scrub" = "Mediterranean",
+  "Montane Grasslands & Shrublands" = "Montane grassland",
+  "Temperate Broadleaf & Mixed Forests" = "Temperate broadleaf forest",
+  "Temperate Conifer Forests" = "Temperate conifer forest",
+  "Temperate Grasslands, Savannas & Shrublands" = "Temperate grassland",
+  "Tropical & Subtropical Coniferous Forests" = "Tropical conifer forest",
+  "Tropical & Subtropical Dry Broadleaf Forests" = "Tropical dry forest",
+  "Tropical & Subtropical Grasslands, Savannas & Shrublands" = "Tropical savanna",
+  "Tropical & Subtropical Moist Broadleaf Forests" = "Tropical moist forest",
+  "Tundra" = "Tundra")
 
-theme_meta <- function() {
-  theme_minimal(base_size = 11) +
-    theme(panel.grid.major.y = element_blank(), panel.grid.minor = element_blank(),
-          panel.grid.major.x = element_line(colour = GRID, linewidth = 0.3),
-          axis.text = element_text(colour = INK2), axis.title = element_text(colour = INK2),
-          strip.text = element_text(colour = INK, face = "bold", hjust = 0),
-          plot.title = element_text(colour = INK, face = "bold"),
-          plot.subtitle = element_text(colour = INK2),
-          legend.position = "bottom", legend.text = element_text(colour = INK2),
-          legend.title = element_text(colour = INK2))
-}
-
-# orchard-style plot: raw effects (sized by precision), pooled estimate,
-# 95% CI (thick) and 95% prediction interval (thin)
-orchard <- function(eff, summ, level_lab, title, subtitle = NULL) {
-  # sample sizes go in the axis label so they never collide with the points
-  summ$ylab <- paste0(summ$level, "\n", summ$lab)
-  eff <- left_join(eff, summ[, c("level", "response", "ylab")], by = c("level", "response"))
-  lv <- unique(summ$ylab[order(summ$response, -as.integer(summ$level))])
-  summ$ylab <- factor(summ$ylab, rev(lv)); eff$ylab <- factor(eff$ylab, rev(lv))
-  ggplot() +
-    geom_vline(xintercept = 0, colour = INK2, linetype = "dashed", linewidth = 0.4) +
-    geom_jitter(data = eff, aes(x = yi, y = ylab, size = 1 / sqrt(vi)),
-                colour = SERIES, alpha = 0.3, height = 0.18, width = 0, stroke = 0) +
-    geom_errorbarh(data = summ, aes(y = ylab, xmin = pi_lb, xmax = pi_ub), height = 0,
-                   colour = INK, linewidth = 0.5) +
-    geom_errorbarh(data = summ, aes(y = ylab, xmin = ci_lb, xmax = ci_ub), height = 0,
-                   colour = INK, linewidth = 1.6) +
-    geom_point(data = summ, aes(x = estimate, y = ylab), shape = 21, fill = "white",
-               colour = INK, size = 3, stroke = 1) +
-    facet_wrap(~ response, ncol = 1, scales = "free_y") +
-    scale_size_continuous(range = c(1, 5), guide = "none") +
-    labs(x = "lnRR  (ln exclosure / grazed; > 0 = higher without grazers)", y = level_lab,
-         title = title, subtitle = subtitle) +
-    theme_meta() + theme(plot.title.position = "plot", axis.text.y = element_text(lineheight = 0.9))
+add_biome <- function(d, path = "data/study_biomes.csv") {
+  bio <- read.csv(path) |>
+    transmute(Study_ID, lat_key = round(Latitude_decimal, 5), lon_key = round(Longitude_decimal, 5),
+              Biome = unname(BIOME_LABELS[BIOME_NAME]))
+  d |> mutate(lat_key = round(Latitude, 5), lon_key = round(Longitude, 5)) |>
+    left_join(bio, by = c("Study_ID", "lat_key", "lon_key")) |> select(-lat_key, -lon_key)
 }

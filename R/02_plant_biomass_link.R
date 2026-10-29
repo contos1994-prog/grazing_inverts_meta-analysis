@@ -64,20 +64,8 @@ est <- bind_rows(res)
 write.csv(est, "output/tables/plant_link_estimates.csv", row.names = FALSE)
 print(est[, c("plant_measure", "response", "term", "estimate", "ci_lb", "ci_ub", "p", "robust_p", "k", "n_studies")])
 
+# study-level points and fitted lines for plotting (R/05_figures.R)
 if (length(scat)) {
-  pts <- bind_rows(lapply(scat, `[[`, "pts")); ln <- bind_rows(lapply(scat, `[[`, "line"))
-  g <- ggplot() +
-    geom_hline(yintercept = 0, colour = INK2, linetype = "dashed", linewidth = 0.4) +
-    geom_vline(xintercept = 0, colour = INK2, linetype = "dashed", linewidth = 0.4) +
-    geom_ribbon(data = ln, aes(x = x, ymin = lb, ymax = ub), fill = "#cde2fb") +
-    geom_line(data = ln, aes(x = x, y = pred), colour = INK, linewidth = 0.8) +
-    geom_point(data = pts, aes(x = plant_lnRR, y = inv_lnRR, size = 1 / sqrt(inv_vi)),
-               shape = 21, fill = SERIES, colour = "white", alpha = 0.8, stroke = 0.6) +
-    facet_grid(response ~ plant_measure, scales = "free") +
-    scale_size_continuous(range = c(2, 7), guide = "none") +
-    labs(x = "Plant biomass lnRR (exclosure / grazed)", y = "Invertebrate lnRR (exclosure / grazed)",
-         title = "Invertebrate vs plant-biomass responses to grazer exclusion",
-         subtitle = "One point per study (size = precision); line and band: meta-regression fit and 95% CI") +
-    theme_meta() + theme(panel.grid.major.y = element_line(colour = GRID, linewidth = 0.3))
-  ggsave("output/figures/plant_biomass_link.png", g, width = 8, height = 7.5, dpi = 250, bg = "white")
+  write.csv(bind_rows(lapply(scat, `[[`, "pts")), "output/tables/plant_link_points.csv", row.names = FALSE)
+  write.csv(bind_rows(lapply(scat, `[[`, "line")), "output/tables/plant_link_fit.csv", row.names = FALSE)
 }
