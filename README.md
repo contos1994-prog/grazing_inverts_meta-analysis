@@ -15,6 +15,7 @@ track plant-biomass responses in studies that measured both.
 | `R/00_functions.R` | Shared helpers: effect sizes, covariance matrix, model fitting, plots |
 | `R/01_invertebrate_models.R` | Overall effect + all moderator analyses + sensitivity checks |
 | `R/02_plant_biomass_link.R` | Invertebrate lnRR vs plant-biomass lnRR |
+| `R/03_trophic_level.R` | Effect by invertebrate trophic level, overall and native vs domestic |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
 | `output/figures/` | Orchard plots, time-since-exclusion bubble plots, funnel plots, plant link |
 
@@ -23,6 +24,7 @@ Run from the repo root:
 ```sh
 Rscript R/01_invertebrate_models.R   # ~10 min (leave-one-study-out refits)
 Rscript R/02_plant_biomass_link.R
+Rscript R/03_trophic_level.R         # ~30 s
 ```
 
 R packages: `metafor`, `clubSandwich`, `readxl`, `dplyr`, `tidyr`, `ggplot2`.
@@ -57,8 +59,13 @@ Richness, Diversity (Shannon and other diversity indices).
 | Origin | Native vs Domestic. Mixed assemblages (24 rows) and invasive (3 rows) excluded for now |
 | Time since exclusion | ln(years + 1), where years = last sampling year - exclusion year, or the stated duration. Ranges use the midpoint; open-ended values (">40 years") use the bound. Every sampling year is kept as its own effect size |
 
+| Trophic level (`R/03`) | Cleaned `Trophic_Level` labels used as they are (no merging into broader guilds). Rows with a blank, "Total" or "Herbivore/detritivore" trophic level are excluded. (a) All exclusions (all origins); (b) native vs domestic: trophic-level models fitted within each origin, plus a joint Trophic x Origin model on trophic levels with >= 3 studies in both origins, giving an omnibus interaction test and a Domestic - Native contrast per trophic level |
+
 Levels with fewer than 3 studies are dropped from that moderator's model.
 The omnibus F-test for "do levels differ?" is in `moderator_tests.csv`.
+Trophic-level outputs are in `trophic_estimates.csv`, `trophic_tests.csv` and
+`trophic_origin_contrasts.csv`. The CR2 robust omnibus test cannot be computed when
+a model has many levels relative to the number of locations; it is reported as NA.
 
 **Sensitivity / bias.** Design (exclosure vs natural grazed-vs-ungrazed);
 removing rows with a zero mean; multilevel Egger test (SE as a moderator);
@@ -99,7 +106,7 @@ See the `Cleaning_log` sheet for the full list. In summary:
   decomposers), Bacterivore, Fungivore, Algivore (nematode feeding groups), Omnivore,
   Parasitoid, Pollinator, Scavenger, Herbivore/detritivore, Total. Blank trophic level set
   to Predator for spiders.
-- Order and Trophic_Level are not yet used in the models, so these changes do not alter results.
+- Order is not yet used in the models. Trophic_Level is used only by `R/03_trophic_level.R`.
   Remaining taxonomic queries (e.g. #1097 "Total" rows, mismatched common names) are flagged
   at the bottom of `Cleaning_log`.
 
