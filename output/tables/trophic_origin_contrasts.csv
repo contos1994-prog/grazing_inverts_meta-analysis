@@ -1,6 +1,0 @@
-"response","trophic_level","contrast","estimate","ci_lb","ci_ub","p","robust_p"
-"Abundance","Detritivore","Domestic - Native",0.409,-0.076,0.894,0.0976,0.303
-"Abundance","Herbivore","Domestic - Native",-0.319,-0.674,0.036,0.0784,0.123
-"Abundance","Predator","Domestic - Native",0.16,-0.226,0.546,0.415,0.403
-"Richness","Herbivore","Domestic - Native",0.111,-0.076,0.299,0.236,0.263
-"Richness","Predator","Domestic - Native",0.005,-0.162,0.172,0.953,0.959

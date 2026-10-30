@@ -2,8 +2,7 @@
 
 Effects of excluding grazers on invertebrate abundance, richness and diversity,
 and whether these depend on stratum, grazer size, grazer origin (native vs
-domestic) and time since exclusion. Also tests whether invertebrate responses
-track plant-biomass responses in studies that measured both.
+domestic), time since exclusion, invertebrate trophic level and biome.
 
 ## Files
 
@@ -16,19 +15,17 @@ track plant-biomass responses in studies that measured both.
 | `scripts/00_make_v2.py` | Builds v2 from the original (`python3 scripts/00_make_v2.py`, needs `openpyxl`) |
 | `R/00_functions.R` | Shared helpers: effect sizes, covariance matrix, model fitting, plots |
 | `R/01_invertebrate_models.R` | Overall effect + all moderator analyses + sensitivity checks |
-| `R/02_plant_biomass_link.R` | Invertebrate lnRR vs plant-biomass lnRR |
-| `R/03_trophic_level.R` | Effect by invertebrate trophic level, overall and native vs domestic |
+| `R/03_trophic_level.R` | Effect by invertebrate trophic level |
 | `R/04_biome.R` | Effect by biome |
 | `R/05_figures.R` | All publication figures (PDF + 600 dpi PNG, 183 mm wide) from the model tables |
 | `docs/Methods_Results.docx` | Draft Methods and Results with tables and figures (`docs/build_methods_results.js` builds it) |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
-| `output/figures/` | Fig1 site map; Fig2 overall + stratum; Fig3 grazer size; Fig4 origin + time; Fig5 trophic level; Fig6 biome + plant biomass; FigS1 funnel plots |
+| `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 stratum + grazer size; Fig4 time since exclusion; Fig5 trophic level; FigS1 biome; FigS2 funnel plots |
 
 Run from the repo root:
 
 ```sh
 Rscript R/01_invertebrate_models.R   # ~10 min (leave-one-study-out refits)
-Rscript R/02_plant_biomass_link.R
 Rscript R/03_trophic_level.R         # ~30 s
 Rscript R/04_biome.R
 Rscript R/05_figures.R               # needs patchwork, sf, maps, ragg
@@ -65,27 +62,21 @@ Richness, Diversity (Shannon and other diversity indices).
 | Hypothesis | Coding |
 |---|---|
 | Stratum | Above-ground / Ground & litter-dwelling (soil/litter, ground-dwelling and the 3 mixed rows) / Below-ground |
-| Grazer size | Largest size class excluded (Small < Medium < Large < Mega); categorical + linear trend. Sensitivity: single-class exclosures only. "NR" rows excluded |
-| Origin | Native vs Domestic. Mixed assemblages (24 rows) and invasive (3 rows) excluded for now |
+| Grazer size | Largest size class excluded (Small < Medium < Large < Mega); categorical + linear trend. "NR" rows excluded |
+| Origin | Native vs Domestic, tested first; not significant for any response, so other moderators pool across origins. Mixed assemblages and invasive grazers excluded from this test |
 | Time since exclusion | ln(years + 1), where years = last sampling year - exclusion year, or the stated duration. Ranges use the midpoint; open-ended values (">40 years") use the bound. Every sampling year is kept as its own effect size |
 
-| Trophic level (`R/03`) | Cleaned `Trophic_Level` labels used as they are (no merging into broader guilds). Rows with a blank, "Total" or "Herbivore/detritivore" trophic level are excluded. (a) All exclusions (all origins); (b) native vs domestic: trophic-level models fitted within each origin, plus a joint Trophic x Origin model on trophic levels with >= 3 studies in both origins, giving an omnibus interaction test and a Domestic - Native contrast per trophic level |
+| Trophic level (`R/03`) | Cleaned `Trophic_Level` labels used as they are (no merging into broader guilds). Rows with a blank, "Total" or "Herbivore/detritivore" trophic level are excluded |
 | Biome (`R/04`) | RESOLVE Ecoregions 2017 biome (Dinerstein et al. 2017; the layer served on ArcGIS Online as "Biomes") at each site, by point-in-polygon; sites just off a polygon edge take the nearest ecoregion within 25 km. 13 studies without coordinates were placed from their site description (`coord_source = manual`; #1609 and #1825 are ambiguous). RESOLVE biomes describe potential natural vegetation, so many grazed grasslands fall in forest biomes |
 
 Levels with fewer than 3 studies are dropped from that moderator's model.
 The omnibus F-test for "do levels differ?" is in `moderator_tests.csv`.
-Trophic-level outputs are in `trophic_estimates.csv`, `trophic_tests.csv` and
-`trophic_origin_contrasts.csv`. The CR2 robust omnibus test cannot be computed when
+Trophic-level outputs are in `trophic_estimates.csv` and `trophic_tests.csv`. The CR2 robust omnibus test cannot be computed when
 a model has many levels relative to the number of locations; it is reported as NA.
 
 **Sensitivity / bias.** Design (exclosure vs natural grazed-vs-ungrazed);
 removing rows with a zero mean; multilevel Egger test (SE as a moderator);
 leave-one-study-out range of the overall estimate; funnel plots.
-
-**Plant biomass link.** Plant-biomass lnRR from the `Ecosystem_functions`
-sheet is averaged to one value per study (inverse-variance, r = 0.5 among a
-study's plant effects) and used as a moderator of invertebrate lnRR in studies
-reporting both. Only above-ground biomass has enough overlapping studies (>= 5).
 
 ## Data cleaning (v2)
 

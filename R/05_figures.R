@@ -128,7 +128,7 @@ fig1 <- ggplot() +
         legend.text = element_text(size = 6), plot.margin = margin(2, 2, 2, 2, "mm"))
 save_fig(fig1, "Fig1_study_sites", h = 105)
 
-# ------------------------------------------------------------------ Figure 2: overall + stratum
+# ------------------------------------------------------------------ Figure 2: overall + grazer origin
 ov <- est_of("model_estimates.csv", "Overall", "") |> mutate(level = response)
 ov_pts <- es |> transmute(response = Response_group, level = Response_group, yi, vi) |> filter(!is.na(response))
 p_ov <- {
@@ -147,22 +147,21 @@ p_ov <- {
     scale_colour_manual(values = RESP_COL, guide = "none") + scale_fill_manual(values = RESP_COL, guide = "none") +
     labs(x = X_LNRR, y = NULL) + theme_pub()
 }
-st <- est_of("model_estimates.csv", "Stratum", "Stratum")
-p_st <- orchard_panel(st, pts_of(st, "Stratum"), c("Above-ground", "Ground & litter-dwelling", "Below-ground"))
-fig2 <- (p_ov / p_st) + plot_layout(heights = c(1, 1.1)) + plot_annotation(tag_levels = "a")
-save_fig(fig2, "Fig2_overall_stratum", h = 120)
-
-# ------------------------------------------------------------------ Figure 3: grazer size
-SIZE_LV <- c("Small", "Medium", "Large", "Mega")
-sz <- est_of("model_estimates.csv", "Grazer size (largest class excluded)", "Max_size_class")
-ss <- est_of("model_estimates.csv", "Grazer size (single-class exclosures only)", "Single_size_class")
-fig3 <- (orchard_panel(sz, pts_of(sz, "Max_size_class"), SIZE_LV) /
-         orchard_panel(ss, pts_of(ss, "Single_size_class"), SIZE_LV)) + plot_annotation(tag_levels = "a")
-save_fig(fig3, "Fig3_grazer_size", h = 140)
-
-# ------------------------------------------------------------------ Figure 4: origin + time since exclusion
 og <- est_of("model_estimates.csv", "Herbivore origin", "Herbivore_origin")
 p_og <- orchard_panel(og, pts_of(og, "Herbivore_origin"), c("Native", "Domestic"))
+fig2 <- (p_ov / p_og) + plot_layout(heights = c(1.1, 0.9)) + plot_annotation(tag_levels = "a")
+save_fig(fig2, "Fig2_overall_origin", h = 115)
+
+# ------------------------------------------------------------------ Figure 3: stratum + grazer size
+st <- est_of("model_estimates.csv", "Stratum", "Stratum")
+p_st <- orchard_panel(st, pts_of(st, "Stratum"), c("Above-ground", "Ground & litter-dwelling", "Below-ground"))
+SIZE_LV <- c("Small", "Medium", "Large", "Mega")
+sz <- est_of("model_estimates.csv", "Grazer size (largest class excluded)", "Max_size_class")
+p_sz <- orchard_panel(sz, pts_of(sz, "Max_size_class"), SIZE_LV)
+fig3 <- (p_st / p_sz) + plot_layout(heights = c(1, 1.15)) + plot_annotation(tag_levels = "a")
+save_fig(fig3, "Fig3_stratum_grazer_size", h = 135)
+
+# ------------------------------------------------------------------ Figure 4: time since exclusion
 tf <- read.csv(paste0(TAB, "time_since_exclusion_fit.csv"))
 tp <- es |> filter(!is.na(Years_since_exclusion), !is.na(Response_group)) |>
   transmute(response = Response_group, log_years = log(Years_since_exclusion + 1), yi, vi)
@@ -178,8 +177,7 @@ p_t <- ggplot() +
   scale_size_continuous(range = c(0.4, 2.8), guide = "none") +
   scale_colour_manual(values = RESP_COL, guide = "none") + scale_fill_manual(values = RESP_COL, guide = "none") +
   labs(x = "Years since grazer exclusion (log scale)", y = "Effect size (lnRR)") + theme_pub()
-fig4 <- (p_og / p_t) + plot_layout(heights = c(0.8, 1)) + plot_annotation(tag_levels = "a")
-save_fig(fig4, "Fig4_origin_time", h = 120)
+save_fig(p_t, "Fig4_time_since_exclusion", h = 65)
 
 # ------------------------------------------------------------------ Figure 5: trophic level
 TROPH_LV <- c("Herbivore", "Pollinator", "Omnivore", "Predator", "Parasitoid", "Detritivore",
@@ -187,59 +185,14 @@ TROPH_LV <- c("Herbivore", "Pollinator", "Omnivore", "Predator", "Parasitoid", "
 es_t <- es |> filter(!is.na(Trophic_Level), !Trophic_Level %in% c("Total", "Herbivore/detritivore"))
 tr <- est_of("trophic_estimates.csv", "Trophic level", "Trophic_Level")
 p_tr <- orchard_panel(tr, pts_of(tr, "Trophic_Level", es_t), intersect(TROPH_LV, tr$level))
+save_fig(p_tr, "Fig5_trophic_level", h = 90)
 
-# within-origin trophic estimates, native and domestic side by side
-to <- bind_rows(
-  est_of("trophic_estimates.csv", "Trophic level (native exclusion)", "Trophic_Level") |> mutate(origin = "Native"),
-  est_of("trophic_estimates.csv", "Trophic level (domestic exclusion)", "Trophic_Level") |> mutate(origin = "Domestic"))
-to_pts <- es_t |> filter(Herbivore_origin %in% c("Native", "Domestic")) |>
-  transmute(response = Response_group, level = Trophic_Level, origin = Herbivore_origin, yi, vi) |>
-  semi_join(to, by = c("response", "level", "origin"))
-lv <- intersect(TROPH_LV, to$level)
-off <- c(Native = 0.17, Domestic = -0.17)
-rs <- intersect(RESP_GROUPS, to$response)
-to <- to |> mutate(response = factor(response, rs), y = match(level, rev(lv)) + off[origin],
-                   origin = factor(origin, c("Native", "Domestic")))
-to_pts <- to_pts |> mutate(response = factor(response, rs),
-                           y = match(level, rev(lv)) + off[origin] + runif(n(), -0.08, 0.08),
-                           origin = factor(origin, c("Native", "Domestic")))
-p_to <- ggplot() +
-  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
-  geom_point(data = to_pts, aes(yi, y, size = 1 / sqrt(vi), colour = origin), alpha = 0.35, stroke = 0) +
-  geom_errorbarh(data = to, aes(y = y, xmin = ci_lb, xmax = ci_ub), height = 0, linewidth = 0.7) +
-  geom_point(data = to, aes(estimate, y, fill = origin), shape = 21, size = 2, stroke = 0.4) +
-  facet_grid(. ~ response, scales = "free_x") +
-  scale_y_continuous(breaks = seq_along(lv), labels = rev(lv), expand = expansion(add = 0.6)) +
-  scale_x_continuous(sec.axis = pct_axis) +
-  scale_size_continuous(range = c(0.4, 2.6), guide = "none") +
-  scale_colour_manual(values = ORIGIN_COL, guide = "none") +
-  scale_fill_manual(values = ORIGIN_COL, name = "Grazers excluded") +
-  labs(x = X_LNRR, y = NULL) + theme_pub() + theme(legend.position = "bottom")
-fig5 <- (p_tr / p_to) + plot_layout(heights = c(1.15, 1)) + plot_annotation(tag_levels = "a")
-save_fig(fig5, "Fig5_trophic_level", h = 165)
-
-# ------------------------------------------------------------------ Figure 6: biome + plant biomass
+# ------------------------------------------------------------------ Figure S1: biome
 bi <- read.csv(paste0(TAB, "biome_estimates.csv")) |> mutate(level = sub("^Biome", "", term))
 p_bi <- orchard_panel(bi, pts_of(bi, "Biome"), sort(unique(bi$level)))
-lp <- read.csv(paste0(TAB, "plant_link_points.csv")) |> filter(grepl("above", plant_measure))
-lf <- read.csv(paste0(TAB, "plant_link_fit.csv")) |> filter(grepl("above", plant_measure))
-lp$response <- factor(lp$response, RESP_GROUPS); lf$response <- factor(lf$response, RESP_GROUPS)
-p_pl <- ggplot() +
-  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
-  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
-  geom_ribbon(data = lf, aes(x, ymin = lb, ymax = ub, fill = response), alpha = 0.2) +
-  geom_line(data = lf, aes(x, pred, colour = response), linewidth = 0.7) +
-  geom_point(data = lp, aes(plant_lnRR, inv_lnRR, size = 1 / sqrt(inv_vi), fill = response),
-             shape = 21, colour = "black", stroke = 0.3, alpha = 0.8) +
-  facet_grid(. ~ response, scales = "free") +
-  scale_size_continuous(range = c(1, 3.5), guide = "none") +
-  scale_colour_manual(values = RESP_COL, guide = "none") + scale_fill_manual(values = RESP_COL, guide = "none") +
-  labs(x = "Above-ground plant biomass effect size (lnRR)", y = "Invertebrate effect size (lnRR)") + theme_pub()
-fig6 <- (p_bi / (p_pl + plot_spacer() + plot_layout(widths = c(2, 1)))) +
-  plot_layout(heights = c(1.5, 1)) + plot_annotation(tag_levels = "a")
-save_fig(fig6, "Fig6_biome_plant_biomass", h = 150)
+save_fig(p_bi, "FigS1_biome", h = 95)
 
-# ------------------------------------------------------------------ Figure S1: funnel plots
+# ------------------------------------------------------------------ Figure S2: funnel plots
 # precision (1/SE) on the y-axis; shaded region = overall estimate +/- 1.96 SE
 ov_est <- setNames(ov$estimate, ov$response)
 fp <- es |> filter(!is.na(Response_group)) |> mutate(response = factor(Response_group, RESP_GROUPS), prec = 1 / sqrt(vi))
@@ -250,7 +203,7 @@ reg <- bind_rows(lapply(RESP_GROUPS, function(r) {
 }))
 xl <- fp |> group_by(response) |> summarise(lo = min(yi), hi = max(yi))
 reg <- reg |> left_join(xl, by = "response") |> mutate(x = pmin(pmax(x, lo - 0.3), hi + 0.3))
-figS1 <- ggplot() +
+figS2 <- ggplot() +
   geom_polygon(data = reg, aes(x, prec), fill = "grey92") +
   geom_vline(data = data.frame(response = factor(RESP_GROUPS, RESP_GROUPS), b = ov_est[RESP_GROUPS]),
              aes(xintercept = b), linewidth = 0.4) +
@@ -259,6 +212,6 @@ figS1 <- ggplot() +
   facet_wrap(~ response, scales = "free") + scale_y_log10(labels = function(x) format(x, drop0trailing = TRUE, trim = TRUE, scientific = FALSE)) +
   scale_colour_manual(values = RESP_COL, guide = "none") +
   labs(x = X_LNRR, y = "Precision (1/SE, log scale)") + theme_pub()
-save_fig(figS1, "FigS1_funnel", h = 65)
+save_fig(figS2, "FigS2_funnel", h = 65)
 
 message("\nDone.")

@@ -58,8 +58,6 @@ for (rg in RESP_GROUPS) {
   ds <- d |> filter(!is.na(Max_size_class)) |> mutate(size_rank = as.numeric(Max_size_class))
   mt <- fit_mlma(ds, ~ size_rank); mtr <- robustify(mt, ds)
   all_est[[length(all_est) + 1]] <- tidy_fit(mt, mtr, ds, "Grazer size trend (per class step)", rg)
-  # sensitivity: studies excluding a single size class only
-  run_categorical(d |> filter(!is.na(Single_size_class)), "Single_size_class", "Grazer size (single-class exclosures only)", rg)
 
   # ---- H4: native vs domestic grazers
   dn <- d |> filter(Herbivore_origin %in% c("Native", "Domestic")) |>
