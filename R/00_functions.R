@@ -46,7 +46,6 @@ load_inverts <- function(path = DATA_FILE) {
     Stratum          = factor(raw$Stratum, levels = c("Above-ground", "Ground & litter-dwelling", "Below-ground")),
     Herbivore_origin = raw$Herbivore_origin,
     Max_size_class   = factor(raw$Max_size_class, levels = c("Small", "Medium", "Large", "Mega")),
-    Single_size_class = factor(raw$Single_size_class, levels = c("Small", "Medium", "Large", "Mega")),
     Response_group   = raw$Response_group,
     Design           = raw$Design,
     Years_since_exclusion = as.numeric(raw$Years_since_exclusion)
