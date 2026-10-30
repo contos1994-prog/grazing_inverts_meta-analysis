@@ -1,4 +1,4 @@
-"analysis","response","test","F","df1","df2","p","robust_F","robust_p"
-"Trophic level","Abundance","difference among Trophic_Level levels",1.268,7,320,0.266,NA,NA
-"Trophic level","Richness","difference among Trophic_Level levels",0.415,2,66,0.662,0.266,0.786
-"Trophic level","Diversity","difference among Trophic_Level levels",0.016,1,13,0.902,0.056,0.826
+"analysis","response","test","F","df1","df2","p","robust_F","robust_p","R2_het_pct","R2_marginal_pct"
+"Trophic level","Abundance","difference among Trophic_Level levels",1.268,7,320,0.266,NA,NA,0,3.5
+"Trophic level","Richness","difference among Trophic_Level levels",0.415,2,66,0.662,0.266,0.786,0,2.8
+"Trophic level","Diversity","difference among Trophic_Level levels",0.016,1,13,0.902,0.056,0.826,0,0.1

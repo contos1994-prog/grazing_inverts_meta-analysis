@@ -36,7 +36,8 @@ for (rg in RESP_GROUPS) {
   tests[[length(tests) + 1]] <- data.frame(
     analysis = "Biome", response = rg, test = "difference among Biome levels",
     F = round(m2$QM, 3), df1 = m2$QMdf[1], df2 = m2$QMdf[2], p = signif(m2$QMp, 3),
-    robust_F = if (is.na(mr2$QMp)) NA else round(mr2$QM, 3), robust_p = signif(mr2$QMp, 3))
+    robust_F = if (is.na(mr2$QMp)) NA else round(mr2$QM, 3), robust_p = signif(mr2$QMp, 3),
+    R2_het_pct = het_explained(m2, d), R2_marginal_pct = r2_marginal(m2))
 
 }
 

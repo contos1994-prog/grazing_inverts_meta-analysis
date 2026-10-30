@@ -16,11 +16,11 @@ write.csv(es, "output/tables/effect_sizes_invertebrates.csv", row.names = FALSE)
 
 all_est <- list(); het <- list(); tests <- list(); time_fits <- list()
 
-record_test <- function(m, mr, analysis, response, what) {
+record_test <- function(m, mr, analysis, response, what, r2 = NA) {
   tests[[length(tests) + 1]] <<- data.frame(
     analysis = analysis, response = response, test = what,
     F = round(m$QM, 3), df1 = m$QMdf[1], df2 = m$QMdf[2], p = signif(m$QMp, 3),
-    robust_F = round(mr$QM, 3), robust_p = signif(mr$QMp, 3))
+    robust_F = round(mr$QM, 3), robust_p = signif(mr$QMp, 3), R2_het_pct = r2, R2_marginal_pct = r2_marginal(m))
 }
 
 # categorical moderator: cell-means model for level estimates + intercept
@@ -33,7 +33,7 @@ run_categorical <- function(d, var, analysis, response) {
   m  <- fit_mlma(d, f_cells); mr <- robustify(m, d)
   all_est[[length(all_est) + 1]] <<- tidy_fit(m, mr, d, analysis, response, var)
   m2 <- fit_mlma(d, f_diff); mr2 <- robustify(m2, d)
-  record_test(m2, mr2, analysis, response, paste("difference among", var, "levels"))
+  record_test(m2, mr2, analysis, response, paste("difference among", var, "levels"), het_explained(m2, d))
 }
 
 for (rg in RESP_GROUPS) {
@@ -48,6 +48,12 @@ for (rg in RESP_GROUPS) {
                           sigma2_location = m0$sigma2[1], sigma2_study = m0$sigma2[2],
                           sigma2_within = m0$sigma2[3], Q = round(m0$QE, 1), Q_p = signif(m0$QEp, 3),
                           t(i2_ml(m0)))
+  # 95% prediction interval: range of true effects expected at a new site
+  p0 <- predict(m0)
+  het[[rg]]$pi_lb <- round(p0$pi.lb, 3); het[[rg]]$pi_ub <- round(p0$pi.ub, 3)
+  het[[rg]]$pi_lb_pct <- pct(p0$pi.lb); het[[rg]]$pi_ub_pct <- pct(p0$pi.ub)
+  # expected share of sites with a negative true effect (normal distribution of true effects)
+  het[[rg]]$pct_sites_negative <- round(100 * pnorm(0, coef(m0)[1], sqrt(sum(m0$sigma2))), 1)
 
   # ---- H2: above- vs ground/litter- vs below-ground
   run_categorical(d |> filter(!is.na(Stratum)), "Stratum", "Stratum", rg)
@@ -58,6 +64,7 @@ for (rg in RESP_GROUPS) {
   ds <- d |> filter(!is.na(Max_size_class)) |> mutate(size_rank = as.numeric(Max_size_class))
   mt <- fit_mlma(ds, ~ size_rank); mtr <- robustify(mt, ds)
   all_est[[length(all_est) + 1]] <- tidy_fit(mt, mtr, ds, "Grazer size trend (per class step)", rg)
+  record_test(mt, mtr, "Grazer size trend (per class step)", rg, "linear trend", het_explained(mt, ds))
 
   # ---- H4: native vs domestic grazers
   dn <- d |> filter(Herbivore_origin %in% c("Native", "Domestic")) |>
@@ -68,6 +75,7 @@ for (rg in RESP_GROUPS) {
   dt <- d |> filter(!is.na(Years_since_exclusion)) |> mutate(log_years = log(Years_since_exclusion + 1))
   mtime <- fit_mlma(dt, ~ log_years); mtimer <- robustify(mtime, dt)
   all_est[[length(all_est) + 1]] <- tidy_fit(mtime, mtimer, dt, "Time since exclusion (ln years+1)", rg)
+  record_test(mtime, mtimer, "Time since exclusion (ln years+1)", rg, "slope", het_explained(mtime, dt))
   # fitted line + 95% CI for plotting (R/05_figures.R)
   xs <- seq(0, max(dt$log_years), length.out = 100); pt <- predict(mtime, newmods = xs)
   time_fits[[rg]] <- data.frame(response = rg, log_years = xs, pred = pt$pred, ci_lb = pt$ci.lb, ci_ub = pt$ci.ub)
