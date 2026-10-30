@@ -20,7 +20,7 @@ domestic), time since exclusion, invertebrate trophic level and biome.
 | `R/05_figures.R` | All publication figures (PDF + 600 dpi PNG, 183 mm wide) from the model tables |
 | `docs/Methods_Results.docx` | Draft Methods and Results with tables and figures (`docs/build_methods_results.js` builds it) |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
-| `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 stratum + grazer size; Fig4 time since exclusion; Fig5 trophic level; FigS1 biome; FigS2 funnel plots |
+| `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 heterogeneity (variance partition, prediction intervals, % explained by moderators); Fig4 stratum + grazer size; Fig5 time since exclusion; Fig6 trophic level; FigS1 biome; FigS2 funnel plots |
 
 Run from the repo root:
 
@@ -56,6 +56,16 @@ p-values are reported alongside as a check.
 
 **Responses** are analysed separately: Abundance (abundance + density),
 Richness, Diversity (Shannon and other diversity indices).
+
+**Heterogeneity.** Cochran's *Q* tests whether effect sizes vary more than sampling
+error allows; multilevel *I*^2 gives the share of total variance that is real and
+splits it among locations, studies and effect sizes within studies (location and study
+are poorly separated because most locations hold one study, so they are summed).
+95% prediction intervals and the expected share of sites with a negative effect are in
+`heterogeneity_overall.csv`. For every moderator, `R2_het_pct` in the test tables is the
+% of heterogeneity explained (1 - sum(sigma2 with moderator) / sum(sigma2 without),
+same data, truncated at 0); `R2_marginal_pct` is the marginal R2 (fixed-effect variance
+as a share of fixed + random variance).
 
 **Moderators** (each fitted separately within each response):
 

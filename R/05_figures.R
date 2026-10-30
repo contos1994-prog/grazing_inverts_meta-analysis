@@ -152,16 +152,66 @@ p_og <- orchard_panel(og, pts_of(og, "Herbivore_origin"), c("Native", "Domestic"
 fig2 <- (p_ov / p_og) + plot_layout(heights = c(1.1, 0.9)) + plot_annotation(tag_levels = "a")
 save_fig(fig2, "Fig2_overall_origin", h = 115)
 
-# ------------------------------------------------------------------ Figure 3: stratum + grazer size
+# ------------------------------------------------------------------ Figure 3: heterogeneity
+het <- read.csv(paste0(TAB, "heterogeneity_overall.csv"))
+# (a) where the variation lies: the location / study split is poorly identified
+# (most locations hold one study), so the two are combined
+part <- het |> transmute(response, `Among studies and locations` = I2_location + I2_study,
+                         `Within studies` = I2_within, `Sampling error` = 100 - I2_total) |>
+  tidyr::pivot_longer(-response, names_to = "source", values_to = "pct") |>
+  mutate(response = factor(response, rev(RESP_GROUPS)),
+         source = factor(source, c("Among studies and locations", "Within studies", "Sampling error")))
+p_part <- ggplot(part, aes(pct, response, fill = source)) +
+  geom_col(width = 0.6, colour = "white", linewidth = 0.2) +
+  scale_fill_manual(values = c("Among studies and locations" = "#33415C", "Within studies" = "#7D8FB3",
+                               "Sampling error" = "#D9DDE6"), name = NULL) +
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 100.5), breaks = seq(0, 100, 25)) +
+  labs(x = "Share of total variance in effect sizes (%)", y = NULL) +
+  theme_pub() + theme(legend.position = "bottom", axis.line.y = element_blank(), axis.ticks.y = element_blank())
+
+# (b) mean effect (95% CI) vs the range of effects expected at a new site (95% PI)
+pi_df <- ov |> select(response, estimate, ci_lb, ci_ub) |>
+  left_join(het |> select(response, pi_lb, pi_ub), by = "response") |>
+  mutate(response = factor(response, rev(RESP_GROUPS)))
+p_pi <- ggplot(pi_df, aes(y = response)) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
+  geom_linerange(aes(xmin = pi_lb, xmax = pi_ub, colour = response), linewidth = 5, alpha = 0.25) +
+  geom_linerange(aes(xmin = ci_lb, xmax = ci_ub), linewidth = 1.2) +
+  geom_point(aes(estimate, fill = response), shape = 21, size = 2.4, stroke = 0.4) +
+  scale_x_continuous(sec.axis = pct_axis) +
+  scale_colour_manual(values = RESP_COL, guide = "none") + scale_fill_manual(values = RESP_COL, guide = "none") +
+  labs(x = X_LNRR, y = NULL) + theme_pub()
+
+# (c) heterogeneity explained by each moderator
+MODS <- c("Herbivore origin" = "Grazer origin", "Stratum" = "Stratum",
+          "Grazer size (largest class excluded)" = "Grazer size",
+          "Time since exclusion (ln years+1)" = "Time since exclusion",
+          "Trophic level" = "Trophic group", "Biome" = "Biome")
+r2 <- bind_rows(read.csv(paste0(TAB, "moderator_tests.csv")), read.csv(paste0(TAB, "trophic_tests.csv")),
+                read.csv(paste0(TAB, "biome_tests.csv"))) |>
+  filter(analysis %in% names(MODS)) |>
+  mutate(moderator = factor(MODS[analysis], rev(MODS)), response = factor(response, RESP_GROUPS))
+p_r2 <- ggplot(r2, aes(R2_het_pct, moderator)) +
+  geom_col(aes(fill = response), width = 0.65) +
+  geom_text(aes(label = sprintf("%.1f", R2_het_pct)), hjust = -0.25, size = 1.9, family = FONT, colour = "grey30") +
+  facet_grid(. ~ response) +
+  scale_x_continuous(limits = c(0, 100), breaks = c(0, 50, 100), expand = c(0, 0)) +
+  scale_fill_manual(values = RESP_COL, guide = "none") +
+  labs(x = "Heterogeneity explained by moderator (%)", y = NULL) + theme_pub()
+
+fig3 <- (p_part + p_pi) / p_r2 + plot_layout(heights = c(1, 1.3)) + plot_annotation(tag_levels = "a")
+save_fig(fig3, "Fig3_heterogeneity", h = 120)
+
+# ------------------------------------------------------------------ Figure 4: stratum + grazer size
 st <- est_of("model_estimates.csv", "Stratum", "Stratum")
 p_st <- orchard_panel(st, pts_of(st, "Stratum"), c("Above-ground", "Ground & litter-dwelling", "Below-ground"))
 SIZE_LV <- c("Small", "Medium", "Large", "Mega")
 sz <- est_of("model_estimates.csv", "Grazer size (largest class excluded)", "Max_size_class")
 p_sz <- orchard_panel(sz, pts_of(sz, "Max_size_class"), SIZE_LV)
 fig3 <- (p_st / p_sz) + plot_layout(heights = c(1, 1.15)) + plot_annotation(tag_levels = "a")
-save_fig(fig3, "Fig3_stratum_grazer_size", h = 135)
+save_fig(fig3, "Fig4_stratum_grazer_size", h = 135)
 
-# ------------------------------------------------------------------ Figure 4: time since exclusion
+# ------------------------------------------------------------------ Figure 5: time since exclusion
 tf <- read.csv(paste0(TAB, "time_since_exclusion_fit.csv"))
 tp <- es |> filter(!is.na(Years_since_exclusion), !is.na(Response_group)) |>
   transmute(response = Response_group, log_years = log(Years_since_exclusion + 1), yi, vi)
@@ -177,15 +227,15 @@ p_t <- ggplot() +
   scale_size_continuous(range = c(0.4, 2.8), guide = "none") +
   scale_colour_manual(values = RESP_COL, guide = "none") + scale_fill_manual(values = RESP_COL, guide = "none") +
   labs(x = "Years since grazer exclusion (log scale)", y = "Effect size (lnRR)") + theme_pub()
-save_fig(p_t, "Fig4_time_since_exclusion", h = 65)
+save_fig(p_t, "Fig5_time_since_exclusion", h = 65)
 
-# ------------------------------------------------------------------ Figure 5: trophic level
+# ------------------------------------------------------------------ Figure 6: trophic level
 TROPH_LV <- c("Herbivore", "Pollinator", "Omnivore", "Predator", "Parasitoid", "Detritivore",
               "Bacterivore", "Fungivore", "Scavenger", "Algivore")
 es_t <- es |> filter(!is.na(Trophic_Level), !Trophic_Level %in% c("Total", "Herbivore/detritivore"))
 tr <- est_of("trophic_estimates.csv", "Trophic level", "Trophic_Level")
 p_tr <- orchard_panel(tr, pts_of(tr, "Trophic_Level", es_t), intersect(TROPH_LV, tr$level))
-save_fig(p_tr, "Fig5_trophic_level", h = 90)
+save_fig(p_tr, "Fig6_trophic_level", h = 90)
 
 # ------------------------------------------------------------------ Figure S1: biome
 bi <- read.csv(paste0(TAB, "biome_estimates.csv")) |> mutate(level = sub("^Biome", "", term))

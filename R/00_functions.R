@@ -113,6 +113,21 @@ i2_ml <- function(m) {
   setNames(round(out, 1), c("I2_location", "I2_study", "I2_within", "I2_total"))
 }
 
+# share of the total heterogeneity (sum of the variance components) explained by
+# a moderator: 1 - sum(sigma2 with moderator) / sum(sigma2 without), on the same
+# data, truncated at 0 (the "pseudo-R2" for meta-regression; Raudenbush 2009)
+het_explained <- function(m, d) {
+  m0 <- fit_mlma(d)
+  round(100 * max(0, 1 - sum(m$sigma2) / sum(m0$sigma2)), 1)
+}
+
+# marginal R2 (Nakagawa & Schielzeth 2013): variance of the fixed-effect
+# predictions as a share of that plus the random-effect variances
+r2_marginal <- function(m) {
+  vf <- var(as.vector(model.matrix(m) %*% coef(m)))
+  round(100 * vf / (vf + sum(m$sigma2)), 1)
+}
+
 pct <- function(x) round(100 * (exp(x) - 1), 1)
 
 # tidy table of coefficient estimates with model-based and robust inference
