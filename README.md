@@ -21,7 +21,7 @@ that measured both.
 | `R/03_trophic_level.R` | Effect by invertebrate trophic level |
 | `R/04_biome.R` | Effect by biome |
 | `R/06_time_by_stratum.R` | Time since exclusion x stratum interaction: omnibus test, slope per stratum, pairwise slope contrasts |
-| `R/05_figures.R` | All publication figures (PDF + 600 dpi PNG, 183 mm wide) from the model tables |
+| `R/05_figures.R` | All publication figures (600 dpi PNG, 183 mm wide) from the model tables |
 | `docs/Methods_Results.docx` | Draft Methods and Results with tables and figures (`docs/build_methods_results.js` builds it) |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
 | `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 heterogeneity (variance partition, prediction intervals, % explained by moderators); Fig4 stratum + grazer size; Fig5 time since exclusion; Fig6 trophic level; Fig7 plant biomass link; FigS1 biome; FigS2 funnel plots; FigS3 time since exclusion by stratum |

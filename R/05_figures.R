@@ -1,7 +1,7 @@
 # Publication figures. Run after R/01-R/04:  Rscript R/05_figures.R
 #
 # Reads the model tables in output/tables and the effect sizes, and writes each
-# figure as vector PDF and 600 dpi PNG to output/figures. Sized for a
+# figure as a 600 dpi PNG to output/figures. Sized for a
 # double-column width of 183 mm. Orchard-style panels show individual effect
 # sizes (point size = precision), the model estimate and its 95% CI.
 
@@ -32,11 +32,9 @@ theme_pub <- function() {
 }
 
 save_fig <- function(p, name, w = 183, h = 120) {
-  ggsave(file.path("output/figures", paste0(name, ".pdf")), p, width = w, height = h, units = "mm",
-         device = cairo_pdf, bg = "white")
   ggsave(file.path("output/figures", paste0(name, ".png")), p, width = w, height = h, units = "mm",
          dpi = 600, device = ragg::agg_png, bg = "white")
-  message("wrote output/figures/", name, ".pdf/.png")
+  message("wrote output/figures/", name, ".png")
 }
 
 # % change on the top axis; breaks chosen so labels never crowd (>= 15% of the lnRR range apart)
@@ -137,12 +135,12 @@ world <- st_as_sf(maps::map("world", plot = FALSE, fill = TRUE, wrap = c(-180, 1
 pts_sf <- st_as_sf(map_pts, coords = c("query_lon", "query_lat"), crs = 4326) |> st_transform(PROJ) |>
   arrange(origin == "Native")      # Native (most common) drawn last, on top
 p_map <- ggplot() +
-  geom_sf(data = world, fill = "grey88", colour = NA) +
+  geom_sf(data = world, fill = "grey88", colour = "white", linewidth = 0.12) +
   geom_sf(data = pts_sf, aes(fill = origin), shape = 21, size = 1.8, colour = "black", stroke = 0.3,
           alpha = 0.85) +
   scale_fill_manual(values = ORIGIN_FIG1_COL, drop = FALSE, guide = "none") +   # legend from bar panel
   coord_sf(crs = PROJ, expand = FALSE, datum = NA) +
-  theme_void(base_size = 7, base_family = FONT)
+  theme_void(base_size = 7, base_family = FONT) + theme(plot.margin = margin(0, 0, 0, 0))
 
 # number of studies per continent, split by the origin of the grazers excluded in that study
 cont <- es_o |> group_by(Continent, Study_ID) |>
@@ -162,10 +160,10 @@ p_cont <- ggplot(cont, aes(n, Continent)) +
   theme_pub() + theme(axis.line.y = element_blank(), axis.ticks.y = element_blank(),
                       plot.margin = margin(2, 2, 2, 2, "mm"))
 
-fig1 <- (p_map + p_cont) + plot_layout(widths = c(3.2, 1), guides = "collect") &
+fig1 <- (p_map + p_cont) + plot_layout(widths = c(3.9, 1), guides = "collect") &
   theme(legend.position = "bottom", legend.title = element_text(size = 6.5),
         legend.text = element_text(size = 6))
-save_fig(fig1, "Fig1_study_sites", h = 90)
+save_fig(fig1, "Fig1_study_sites", h = 76)
 
 # ------------------------------------------------------------------ Figure 2: overall + grazer origin
 ov <- est_of("model_estimates.csv", "Overall", "") |> mutate(level = response)
