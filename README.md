@@ -20,10 +20,11 @@ that measured both.
 | `R/02_plant_biomass_link.R` | Invertebrate lnRR vs plant above-ground biomass lnRR: study-level Pearson correlation + multilevel meta-regression (overall, abundance, richness) |
 | `R/03_trophic_level.R` | Effect by invertebrate trophic level |
 | `R/04_biome.R` | Effect by biome |
+| `R/06_time_by_stratum.R` | Time since exclusion x stratum interaction: omnibus test, slope per stratum, pairwise slope contrasts |
 | `R/05_figures.R` | All publication figures (PDF + 600 dpi PNG, 183 mm wide) from the model tables |
 | `docs/Methods_Results.docx` | Draft Methods and Results with tables and figures (`docs/build_methods_results.js` builds it) |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
-| `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 heterogeneity (variance partition, prediction intervals, % explained by moderators); Fig4 stratum + grazer size; Fig5 time since exclusion; Fig6 trophic level; Fig7 plant biomass link; FigS1 biome; FigS2 funnel plots |
+| `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 heterogeneity (variance partition, prediction intervals, % explained by moderators); Fig4 stratum + grazer size; Fig5 time since exclusion; Fig6 trophic level; Fig7 plant biomass link; FigS1 biome; FigS2 funnel plots; FigS3 time since exclusion by stratum |
 
 Run from the repo root:
 
@@ -32,6 +33,7 @@ Rscript R/01_invertebrate_models.R   # ~10 min (leave-one-study-out refits)
 Rscript R/02_plant_biomass_link.R    # ~10 s
 Rscript R/03_trophic_level.R         # ~30 s
 Rscript R/04_biome.R
+Rscript R/06_time_by_stratum.R       # ~10 s; run before R/05
 Rscript R/05_figures.R               # needs patchwork, sf, maps, ragg
 ```
 

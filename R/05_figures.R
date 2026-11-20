@@ -15,6 +15,7 @@ FONT <- "Liberation Sans"            # metric-compatible with Arial / Helvetica
 RESP_COL <- c(Abundance = "#0072B2", Richness = "#D55E00", Diversity = "#009E73")   # Okabe-Ito
 ORIGIN_COL <- c(Native = "#E69F00", Domestic = "#56B4E9", Mixed = "#999999")
 TAB <- "output/tables/"
+fmt_p <- function(p) ifelse(p < 0.001, "< 0.001", paste("=", formatC(p, digits = 2, format = "f")))
 
 theme_pub <- function() {
   theme_classic(base_size = 7, base_family = FONT) +
@@ -267,6 +268,37 @@ p_t <- ggplot() +
   labs(x = "Years since grazer exclusion (log scale)", y = "Effect size (lnRR)") + theme_pub()
 save_fig(p_t, "Fig5_time_since_exclusion", h = 65)
 
+# ------------------------------------------------------------------ Figure S3: abundance vs time since exclusion, by stratum
+# one panel per stratum (a-c), shared y-axis; fits from the Stratum x time model (R/06)
+STRATA <- levels(es$Stratum)
+tsf <- read.csv(paste0(TAB, "time_by_stratum_fit.csv")) |> filter(response == "Abundance")
+tse <- read.csv(paste0(TAB, "time_by_stratum_estimates.csv")) |> filter(grepl("slope", parameter), response == "Abundance")
+tsp <- es |> filter(Response_group == "Abundance", !is.na(Years_since_exclusion), !is.na(Stratum)) |>
+  transmute(Stratum = as.character(Stratum), log_years = log(Years_since_exclusion + 1), yi, vi)
+tse$lab <- sprintf("slope = %.2f, P %s\n%d (%d)", tse$estimate, fmt_p(tse$p), tse$k, tse$n_studies)
+ts_ylim <- range(c(tsp$yi, tsf$ci_lb, tsf$ci_ub)) * c(1, 1.15)
+ts_panel <- function(s, first) {
+  ggplot() +
+    geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
+    geom_point(data = filter(tsp, Stratum == s), aes(log_years, yi, size = 1 / sqrt(vi)),
+               colour = RESP_COL[["Abundance"]], alpha = 0.3, stroke = 0) +
+    geom_ribbon(data = filter(tsf, Stratum == s), aes(log_years, ymin = ci_lb, ymax = ci_ub),
+                fill = RESP_COL[["Abundance"]], alpha = 0.2) +
+    geom_line(data = filter(tsf, Stratum == s), aes(log_years, pred), colour = RESP_COL[["Abundance"]], linewidth = 0.7) +
+    geom_label(data = filter(tse, Stratum == s), aes(x = Inf, y = Inf, label = lab), hjust = 1, vjust = 1, size = 1.9,
+               family = FONT, colour = "grey20", lineheight = 0.95, fill = "white", label.size = 0,
+               label.padding = unit(0.5, "mm")) +
+    scale_x_continuous(breaks = log(yrs + 1), labels = yrs, limits = c(0, log(55))) +
+    scale_y_continuous(limits = ts_ylim) +
+    scale_size_continuous(range = c(0.4, 2.8), limits = range(1 / sqrt(tsp$vi)), guide = "none") +
+    labs(title = s, x = if (s == STRATA[2]) "Years since grazer exclusion (log scale)" else NULL,
+         y = if (first) "Effect size on abundance (lnRR)" else NULL) +
+    theme_pub() + theme(plot.title = element_text(face = "bold", size = 7, hjust = 0.5))
+}
+p_ts <- wrap_plots(lapply(seq_along(STRATA), function(i) ts_panel(STRATA[i], i == 1)), nrow = 1) +
+  plot_annotation(tag_levels = "a")
+save_fig(p_ts, "FigS3_time_by_stratum", h = 65)
+
 # ------------------------------------------------------------------ Figure 6: trophic level
 TROPH_LV <- c("Herbivore", "Pollinator", "Omnivore", "Predator", "Parasitoid", "Detritivore",
               "Bacterivore", "Fungivore", "Scavenger", "Algivore")
@@ -281,7 +313,6 @@ PL_SETS <- c("Overall", "Abundance", "Richness")
 PL_COL <- c(Overall = "grey30", RESP_COL[c("Abundance", "Richness")])
 pl_pts <- read.csv(paste0(TAB, "plant_link_points.csv")) |> mutate(set = factor(set, PL_SETS))
 pl_fit <- read.csv(paste0(TAB, "plant_link_fit.csv")) |> mutate(set = factor(set, PL_SETS))
-fmt_p <- function(p) ifelse(p < 0.001, "< 0.001", paste("=", formatC(p, digits = 2, format = "f")))
 pl_lab <- read.csv(paste0(TAB, "plant_link_correlations.csv")) |>
   left_join(read.csv(paste0(TAB, "plant_link_metaregression.csv")) |> select(set = response, slope = estimate, mr_p = p),
             by = "set") |>
