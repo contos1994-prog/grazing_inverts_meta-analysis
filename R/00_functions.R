@@ -31,6 +31,7 @@ load_inverts <- function(path = DATA_FILE) {
     excel_row     = seq_len(nrow(raw)) + 1,
     Study_ID      = trimws(raw$Study_ID),
     Author_Year   = trimws(raw$Author_Year),
+    Country       = trimws(raw$Country),
     Location_ID   = col_like(raw, "Location_ID"),
     Latitude      = as.numeric(raw$Latitude_decimal),
     Longitude     = as.numeric(raw$Longitude_decimal),

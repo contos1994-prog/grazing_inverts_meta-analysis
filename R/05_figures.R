@@ -94,39 +94,77 @@ orchard_panel <- function(est, pts, levels, col_by = "response", cols = RESP_COL
   g
 }
 
-# ------------------------------------------------------------------ Figure 1: map
+# ------------------------------------------------------------------ Figure 1: map + studies per continent
+# Grazer origin is grouped as Native vs Non-native (domestic and invasive grazers);
+# a study / site excluding both, or coded "Mixed", is "Mixed".
 sites <- read.csv("data/study_biomes.csv")
-site_k <- es |> mutate(lat_key = round(Latitude, 5), lon_key = round(Longitude, 5)) |>
-  count(Study_ID, lat_key, lon_key, name = "k")
-origin_site <- es |> mutate(lat_key = round(Latitude, 5), lon_key = round(Longitude, 5)) |>
-  group_by(Study_ID, lat_key, lon_key) |>
-  summarise(origin = { o <- unique(na.omit(Herbivore_origin)); o <- o[o %in% c("Native", "Domestic")]
-                       if (length(o) == 1) o else "Mixed" }, .groups = "drop")
+ORIGIN_LEVELS <- c("Native", "Non-native", "Mixed")
+ORIGIN_FIG1_COL <- setNames(unname(ORIGIN_COL), ORIGIN_LEVELS)
+combine_origin <- function(o) {
+  o <- unique(na.omit(o))
+  if (length(o) == 1 && o %in% c("Native", "Non-native")) o else "Mixed"
+}
+# country (as entered) -> continent; Greenland is placed in North America
+CONTINENT_OF <- function(country) {
+  dplyr::case_when(
+    grepl("^(USA|United States|Mexico|Canada|Greenland)", country)                    ~ "North America",
+    grepl("^(Argentina|Brazil|Chile|Uruguay|Peru|Bolivia|Colombia|Ecuador)", country) ~ "South America",
+    grepl("^(Kenya|South Africa|Mozambique|Tanzania|Namibia|Botswana|Zimbabwe|Ethiopia|Uganda)", country) ~ "Africa",
+    grepl("^(China|India|Japan|Mongolia|Iran|Israel|Nepal|Pakistan|Kazakhstan)", country) ~ "Asia",
+    grepl("^(Australia|New Zealand)", country)                                         ~ "Oceania",
+    grepl("^(Switzerland|Netherlands|UK|Spain|Hungary|Romania|Germany|Finland|Finlad|Greece|Portugal|Sweden|Norway|France|Italy|Austria|Denmark|Ireland|Poland|Czech|Belgium|Estonia)",
+          country)                                                                     ~ "Europe",
+    TRUE ~ NA_character_)
+}
+es_o <- es |> mutate(lat_key = round(Latitude, 5), lon_key = round(Longitude, 5),
+                     origin2 = dplyr::recode(Herbivore_origin, Domestic = "Non-native", Invasive = "Non-native"),
+                     Continent = CONTINENT_OF(Country))
+if (anyNA(es_o$Continent)) stop("No continent for country: ",
+                                paste(unique(es_o$Country[is.na(es_o$Continent)]), collapse = ", "))
+
+origin_site <- es_o |> group_by(Study_ID, lat_key, lon_key) |>
+  summarise(origin = combine_origin(origin2), .groups = "drop")
 map_pts <- sites |> mutate(lat_key = round(Latitude_decimal, 5), lon_key = round(Longitude_decimal, 5)) |>
-  inner_join(site_k, by = c("Study_ID", "lat_key", "lon_key")) |>
-  left_join(origin_site, by = c("Study_ID", "lat_key", "lon_key")) |>
+  inner_join(origin_site, by = c("Study_ID", "lat_key", "lon_key")) |>
   group_by(query_lat, query_lon) |>
-  summarise(k = sum(k), n_studies = n_distinct(Study_ID),
-            origin = if (n_distinct(origin) == 1) first(origin) else "Mixed", .groups = "drop") |>
-  mutate(origin = factor(origin, c("Native", "Domestic", "Mixed"),
-                         c("Native", "Domestic", "Native and domestic / mixed")))
+  summarise(origin = if (n_distinct(origin) == 1) first(origin) else "Mixed", .groups = "drop") |>
+  mutate(origin = factor(origin, ORIGIN_LEVELS))
 PROJ <- "+proj=robin"
 world <- st_as_sf(maps::map("world", plot = FALSE, fill = TRUE, wrap = c(-180, 180))) |>
   filter(ID != "Antarctica") |> st_make_valid() |>
   st_wrap_dateline(options = c("WRAPDATELINE=YES", "DATELINEOFFSET=180")) |> st_transform(PROJ)
 pts_sf <- st_as_sf(map_pts, coords = c("query_lon", "query_lat"), crs = 4326) |> st_transform(PROJ) |>
-  arrange(desc(k))
-fig1 <- ggplot() +
+  arrange(origin == "Native")      # Native (most common) drawn last, on top
+p_map <- ggplot() +
   geom_sf(data = world, fill = "grey88", colour = NA) +
-  geom_sf(data = pts_sf, aes(size = k, fill = origin), shape = 21, colour = "black", stroke = 0.3, alpha = 0.85) +
-  scale_fill_manual(values = setNames(unname(ORIGIN_COL), levels(map_pts$origin)), name = "Grazers excluded") +
-  scale_size_area(max_size = 6, breaks = c(5, 20, 50, 100), name = "Effect sizes") +
+  geom_sf(data = pts_sf, aes(fill = origin), shape = 21, size = 1.8, colour = "black", stroke = 0.3,
+          alpha = 0.85) +
+  scale_fill_manual(values = ORIGIN_FIG1_COL, drop = FALSE, guide = "none") +   # legend from bar panel
   coord_sf(crs = PROJ, expand = FALSE, datum = NA) +
-  guides(fill = guide_legend(override.aes = list(size = 2.5), order = 1)) +
-  theme_void(base_size = 7, base_family = FONT) +
-  theme(legend.position = "bottom", legend.box = "horizontal", legend.title = element_text(size = 6.5),
-        legend.text = element_text(size = 6), plot.margin = margin(2, 2, 2, 2, "mm"))
-save_fig(fig1, "Fig1_study_sites", h = 105)
+  theme_void(base_size = 7, base_family = FONT)
+
+# number of studies per continent, split by the origin of the grazers excluded in that study
+cont <- es_o |> group_by(Continent, Study_ID) |>
+  summarise(origin = combine_origin(origin2), .groups = "drop") |>
+  count(Continent, origin, name = "n") |>
+  mutate(origin = factor(origin, ORIGIN_LEVELS))
+cont_tot <- cont |> group_by(Continent) |> summarise(n = sum(n), .groups = "drop") |> arrange(desc(n))
+cont <- cont |> mutate(Continent = factor(Continent, rev(cont_tot$Continent)))
+cont_tot <- cont_tot |> mutate(Continent = factor(Continent, levels(cont$Continent)))
+p_cont <- ggplot(cont, aes(n, Continent)) +
+  geom_col(aes(fill = origin), width = 0.7, colour = "white", linewidth = 0.2,
+           position = position_stack(reverse = TRUE)) +
+  geom_text(data = cont_tot, aes(label = n), hjust = -0.3, size = 2, family = FONT, colour = "grey20") +
+  scale_fill_manual(values = ORIGIN_FIG1_COL, drop = FALSE, name = "Grazers excluded") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(x = "Number of studies", y = NULL) +
+  theme_pub() + theme(axis.line.y = element_blank(), axis.ticks.y = element_blank(),
+                      plot.margin = margin(2, 2, 2, 2, "mm"))
+
+fig1 <- (p_map + p_cont) + plot_layout(widths = c(3.2, 1), guides = "collect") &
+  theme(legend.position = "bottom", legend.title = element_text(size = 6.5),
+        legend.text = element_text(size = 6))
+save_fig(fig1, "Fig1_study_sites", h = 90)
 
 # ------------------------------------------------------------------ Figure 2: overall + grazer origin
 ov <- est_of("model_estimates.csv", "Overall", "") |> mutate(level = response)
