@@ -1,0 +1,2 @@
+"n_studies","k","estimate","ci_lb","ci_ub","p","pct_change","pct_ci_lb","pct_ci_ub","min_lnRR","max_lnRR"
+16,43,0.388,0.101,0.676,0.0115,47.5,10.6,96.6,-0.12,1.978

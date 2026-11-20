@@ -275,6 +275,36 @@ tr <- est_of("trophic_estimates.csv", "Trophic level", "Trophic_Level")
 p_tr <- orchard_panel(tr, pts_of(tr, "Trophic_Level", es_t), intersect(TROPH_LV, tr$level))
 save_fig(p_tr, "Fig6_trophic_level", h = 90)
 
+# ------------------------------------------------------------------ Figure 7: plant biomass link
+# one point per study (study-level mean lnRR); line = least-squares fit with 95% CI
+PL_SETS <- c("Overall", "Abundance", "Richness")
+PL_COL <- c(Overall = "grey30", RESP_COL[c("Abundance", "Richness")])
+pl_pts <- read.csv(paste0(TAB, "plant_link_points.csv")) |> mutate(set = factor(set, PL_SETS))
+pl_fit <- read.csv(paste0(TAB, "plant_link_fit.csv")) |> mutate(set = factor(set, PL_SETS))
+fmt_p <- function(p) ifelse(p < 0.001, "< 0.001", paste("=", formatC(p, digits = 2, format = "f")))
+pl_lab <- read.csv(paste0(TAB, "plant_link_correlations.csv")) |>
+  left_join(read.csv(paste0(TAB, "plant_link_metaregression.csv")) |> select(set = response, slope = estimate, mr_p = p),
+            by = "set") |>
+  mutate(set = factor(set, PL_SETS),
+         lab = sprintf("r = %.2f, P %s, n = %d\nslope = %.2f, P %s", pearson_r, fmt_p(p), n_studies, slope, fmt_p(mr_p)))
+p_pl <- ggplot(pl_pts, aes(plant_lnRR, inv_lnRR)) +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
+  geom_ribbon(data = pl_fit, aes(x = x, ymin = lb, ymax = ub, fill = set), inherit.aes = FALSE, alpha = 0.15) +
+  geom_line(data = pl_fit, aes(x = x, y = pred, colour = set), linewidth = 0.6) +
+  geom_point(aes(size = 1 / sqrt(inv_vi), fill = set), shape = 21, colour = "black", stroke = 0.3, alpha = 0.8) +
+  geom_label(data = pl_lab, aes(x = Inf, y = Inf, label = lab), hjust = 1, vjust = 1, size = 1.9,
+             family = FONT, colour = "grey20", lineheight = 0.95, fill = "white", label.size = 0,
+             label.padding = unit(0.6, "mm")) +
+  facet_grid(. ~ set, labeller = as_labeller(c(Overall = "Overall (abundance + richness)",
+                                               Abundance = "Abundance", Richness = "Richness"))) +
+  scale_colour_manual(values = PL_COL, guide = "none") + scale_fill_manual(values = PL_COL, guide = "none") +
+  scale_size_continuous(range = c(0.8, 3.2), guide = "none") +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.3))) +
+  labs(x = "Plant above-ground biomass effect (lnRR, exclosure / grazed)",
+       y = "Invertebrate effect (lnRR)") + theme_pub()
+save_fig(p_pl, "Fig7_plant_biomass", h = 70)
+
 # ------------------------------------------------------------------ Figure S1: biome
 bi <- read.csv(paste0(TAB, "biome_estimates.csv")) |> mutate(level = sub("^Biome", "", term))
 p_bi <- orchard_panel(bi, pts_of(bi, "Biome"), sort(unique(bi$level)))

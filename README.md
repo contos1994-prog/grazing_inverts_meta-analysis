@@ -2,7 +2,9 @@
 
 Effects of excluding grazers on invertebrate abundance, richness and diversity,
 and whether these depend on stratum, grazer size, grazer origin (native vs
-domestic), time since exclusion, invertebrate trophic level and biome.
+domestic), time since exclusion, invertebrate trophic level and biome. Also tests whether
+invertebrate responses track plant above-ground biomass responses in studies
+that measured both.
 
 ## Files
 
@@ -15,17 +17,19 @@ domestic), time since exclusion, invertebrate trophic level and biome.
 | `scripts/00_make_v2.py` | Builds v2 from the original (`python3 scripts/00_make_v2.py`, needs `openpyxl`) |
 | `R/00_functions.R` | Shared helpers: effect sizes, covariance matrix, model fitting, plots |
 | `R/01_invertebrate_models.R` | Overall effect + all moderator analyses + sensitivity checks |
+| `R/02_plant_biomass_link.R` | Invertebrate lnRR vs plant above-ground biomass lnRR: study-level Pearson correlation + multilevel meta-regression (overall, abundance, richness) |
 | `R/03_trophic_level.R` | Effect by invertebrate trophic level |
 | `R/04_biome.R` | Effect by biome |
 | `R/05_figures.R` | All publication figures (PDF + 600 dpi PNG, 183 mm wide) from the model tables |
 | `docs/Methods_Results.docx` | Draft Methods and Results with tables and figures (`docs/build_methods_results.js` builds it) |
 | `output/tables/` | CSV outputs (effect sizes, estimates, moderator tests, heterogeneity) |
-| `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 heterogeneity (variance partition, prediction intervals, % explained by moderators); Fig4 stratum + grazer size; Fig5 time since exclusion; Fig6 trophic level; FigS1 biome; FigS2 funnel plots |
+| `output/figures/` | Fig1 site map; Fig2 overall + grazer origin; Fig3 heterogeneity (variance partition, prediction intervals, % explained by moderators); Fig4 stratum + grazer size; Fig5 time since exclusion; Fig6 trophic level; Fig7 plant biomass link; FigS1 biome; FigS2 funnel plots |
 
 Run from the repo root:
 
 ```sh
 Rscript R/01_invertebrate_models.R   # ~10 min (leave-one-study-out refits)
+Rscript R/02_plant_biomass_link.R    # ~10 s
 Rscript R/03_trophic_level.R         # ~30 s
 Rscript R/04_biome.R
 Rscript R/05_figures.R               # needs patchwork, sf, maps, ragg
