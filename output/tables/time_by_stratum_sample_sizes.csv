@@ -1,0 +1,10 @@
+"Stratum","response","k","n_studies","n_locations","years_min","years_median","years_max"
+"Above-ground","Abundance",184,33,22,0,4,27
+"Ground & litter-dwelling","Abundance",141,21,18,0,10,54
+"Below-ground","Abundance",75,13,10,2,4,38
+"Above-ground","Richness",28,13,12,0,4,27
+"Ground & litter-dwelling","Richness",45,11,11,0,12,40
+"Below-ground","Richness",30,6,5,2,2,11
+"Above-ground","Diversity",15,5,5,3,9,27
+"Ground & litter-dwelling","Diversity",6,4,4,0,4,20
+"Below-ground","Diversity",19,6,6,2,4,11

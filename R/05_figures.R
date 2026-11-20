@@ -15,6 +15,7 @@ FONT <- "Liberation Sans"            # metric-compatible with Arial / Helvetica
 RESP_COL <- c(Abundance = "#0072B2", Richness = "#D55E00", Diversity = "#009E73")   # Okabe-Ito
 ORIGIN_COL <- c(Native = "#E69F00", Domestic = "#56B4E9", Mixed = "#999999")
 TAB <- "output/tables/"
+fmt_p <- function(p) ifelse(p < 0.001, "< 0.001", paste("=", formatC(p, digits = 2, format = "f")))
 
 theme_pub <- function() {
   theme_classic(base_size = 7, base_family = FONT) +
@@ -267,6 +268,34 @@ p_t <- ggplot() +
   labs(x = "Years since grazer exclusion (log scale)", y = "Effect size (lnRR)") + theme_pub()
 save_fig(p_t, "Fig5_time_since_exclusion", h = 65)
 
+# ------------------------------------------------------------------ Figure S3: time since exclusion x stratum
+STRATA <- levels(es$Stratum)
+tsf <- read.csv(paste0(TAB, "time_by_stratum_fit.csv"))
+tse <- read.csv(paste0(TAB, "time_by_stratum_estimates.csv")) |> filter(grepl("slope", parameter))
+tst <- read.csv(paste0(TAB, "time_by_stratum_tests.csv"))
+row_lab <- setNames(sprintf("%s\n(interaction P = %.2f)", tst$response, tst$p), tst$response)
+tsp <- es |> filter(!is.na(Years_since_exclusion), !is.na(Stratum), !is.na(Response_group)) |>
+  transmute(response = Response_group, Stratum = as.character(Stratum),
+            log_years = log(Years_since_exclusion + 1), yi, vi) |>
+  semi_join(tse, by = c("response", "Stratum"))
+tse$lab <- sprintf("slope = %.2f, P %s\n%d (%d)", tse$estimate, fmt_p(tse$p), tse$k, tse$n_studies)
+lvl <- function(df) mutate(df, response = factor(response, RESP_GROUPS), Stratum = factor(Stratum, STRATA))
+tsf <- lvl(tsf); tse <- lvl(tse); tsp <- lvl(tsp)
+p_ts <- ggplot() +
+  geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.3, colour = "grey45") +
+  geom_point(data = tsp, aes(log_years, yi, size = 1 / sqrt(vi), colour = response), alpha = 0.3, stroke = 0) +
+  geom_ribbon(data = tsf, aes(log_years, ymin = ci_lb, ymax = ci_ub, fill = response), alpha = 0.2) +
+  geom_line(data = tsf, aes(log_years, pred, colour = response), linewidth = 0.7) +
+  geom_label(data = tse, aes(x = Inf, y = Inf, label = lab), hjust = 1, vjust = 1, size = 1.8, family = FONT,
+             colour = "grey20", lineheight = 0.95, fill = "white", label.size = 0, label.padding = unit(0.5, "mm")) +
+  facet_grid(response ~ Stratum, scales = "free_y", labeller = labeller(response = row_lab)) +
+  scale_x_continuous(breaks = log(yrs + 1), labels = yrs) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.3))) +
+  scale_size_continuous(range = c(0.4, 2.8), guide = "none") +
+  scale_colour_manual(values = RESP_COL, guide = "none") + scale_fill_manual(values = RESP_COL, guide = "none") +
+  labs(x = "Years since grazer exclusion (log scale)", y = "Effect size (lnRR)") + theme_pub()
+save_fig(p_ts, "FigS3_time_by_stratum", h = 130)
+
 # ------------------------------------------------------------------ Figure 6: trophic level
 TROPH_LV <- c("Herbivore", "Pollinator", "Omnivore", "Predator", "Parasitoid", "Detritivore",
               "Bacterivore", "Fungivore", "Scavenger", "Algivore")
@@ -281,7 +310,6 @@ PL_SETS <- c("Overall", "Abundance", "Richness")
 PL_COL <- c(Overall = "grey30", RESP_COL[c("Abundance", "Richness")])
 pl_pts <- read.csv(paste0(TAB, "plant_link_points.csv")) |> mutate(set = factor(set, PL_SETS))
 pl_fit <- read.csv(paste0(TAB, "plant_link_fit.csv")) |> mutate(set = factor(set, PL_SETS))
-fmt_p <- function(p) ifelse(p < 0.001, "< 0.001", paste("=", formatC(p, digits = 2, format = "f")))
 pl_lab <- read.csv(paste0(TAB, "plant_link_correlations.csv")) |>
   left_join(read.csv(paste0(TAB, "plant_link_metaregression.csv")) |> select(set = response, slope = estimate, mr_p = p),
             by = "set") |>
